@@ -1,0 +1,42 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "sparse-ffn-mvs"
+version = "0.2.0"
+description = "Multivariate statistical study of sparse activations in dense Transformer FFNs."
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+authors = [{ name = "MVS Sparse FFN Project" }]
+dependencies = [
+  "torch>=2.4",
+  "transformers>=4.45",
+  "datasets>=3.0",
+  "huggingface-hub>=0.26",
+  "numpy>=1.26",
+  "pandas>=2.1",
+  "matplotlib>=3.8",
+  "scipy>=1.11",
+  "scikit-learn>=1.4",
+  "PyYAML>=6.0",
+  "tqdm>=4.66",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=8.0", "ruff>=0.6"]
+
+[project.scripts]
+sparse-ffn = "sparse_ffn.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]
+testpaths = ["tests"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py310"

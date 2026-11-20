@@ -1,0 +1,15 @@
+.venv/
+__pycache__/
+.pytest_cache/
+.ruff_cache/
+*.py[cod]
+*.egg-info/
+build/
+dist/
+.env
+HF_HOME/
+.cache/
+data/raw/
+data/processed/
+artifacts/
+*.log
