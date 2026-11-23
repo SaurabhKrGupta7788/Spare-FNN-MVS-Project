@@ -59,7 +59,7 @@
     \vspace*{0.5cm}
     
     {\Large \textbf{PROJECT REPORT}}\\[0.4cm]
-    {\large \textbf{CSP 1602: Software Engineering Lab / Multivariate Statistical Analysis}}\\[1.2cm]
+    {\large \textbf{CSP 1602: Multivariate Statistical Analysis}}\\[1.2cm]
     
     \rule{\linewidth}{1.2pt}\\[0.4cm]
     {\LARGE \bfseries Statistical Characterisation of Sparse Activations and Low-Rank Latent Structures in Dense Feed-Forward Neural Networks}\\[0.2cm]
@@ -100,7 +100,7 @@
 
 Feed-forward neural network (FFN) sub-layers contain the vast majority of learned parameters in modern Transformer-based causal language models. Although parameter matrices are entirely dense, non-linear activation functions such as ReLU frequently set intermediate features to exact zero. This study provides an end-to-end multivariate statistical characterisation of intermediate post-ReLU activations across all 12 layers of OPT-125M evaluated on the WikiText-2 benchmark.
 
-We formulate and test five foundational multivariate research questions. First, repeated-measures ANOVA, Greenhouse-Geisser sphericity adjustment ($\hat{\epsilon} = 0.125, p < 10^{-45}$), and non-parametric Friedman tests ($Q = 432.99, p < 10^{-85}$) decisively reject profile flatness across network depth, identifying a dramatic early-intermediate sparsity spike where Layer~3 reaches 98.77\% exact zeros. Second, prevalence-filtered neuron co-activation analysis reveals strong positive clusters in early layers ($\text{mean } \phi = 0.068$) transitioning into near-orthogonal, independent detectors in intermediate layers ($\text{median } \phi \approx -0.01$). Third, covariance-based PCA and Roy-Vetterli spectral entropy effective rank quantify severe latent collapse: Layer~0 operates with an effective rank of merely $1.51$ ($>80\%$ variance in 1 component), while middle layers expand to approximately $46$ effective dimensions with over 90\% split-half subspace stability. Fourth, SVD on incoming and outgoing weight matrices demonstrates that weights retain near-full spectral rank ($\text{mean } \text{erank}_W \approx 594$), proving empirical activation collapse ($\text{mean } \text{erank}_A \approx 26$) is driven by dynamic token representations and ReLU gating rather than parameter bottlenecks ($r = -0.607, p = 0.036$). Finally, One-Way MANOVA (Wilks' $\Lambda = 2.33 \times 10^{-6}, p = 0.0$) and Linear Discriminant Analysis achieve 100\% cross-validated domain classification accuracy, confirming that FFN intermediate activations encode domain-specific style and semantics.
+We formulate and test five foundational multivariate research questions. First, repeated-measures ANOVA, Greenhouse-Geisser sphericity adjustment ($\hat{\epsilon} = 0.125, p < 10^{-45}$), and non-parametric Friedman tests ($Q = 432.99, p < 10^{-85}$) decisively reject profile flatness across network depth, identifying a dramatic early-intermediate sparsity spike where Layer~3 reaches 98.77\% exact zeros. Second, prevalence-filtered neuron co-activation analysis reveals strong positive clusters in early layers ($\text{mean } \phi = 0.068$) transitioning into near-orthogonal, independent detectors in intermediate layers ($\text{median } \phi \approx -0.01$). Third, covariance-based PCA and Roy-Vetterli spectral entropy effective rank quantify severe latent collapse: Layer~0 operates with an effective rank of merely $1.51$ ($>80\%$ variance in 1 component), while middle layers expand to approximately $46$ effective dimensions with over 90\% split-half subspace stability. Fourth, SVD on incoming and outgoing weight matrices of frozen OPT-125M reveals that parameter dimensionality strongly couples with activation dimensionality across depth ($r = 0.799, p = 0.0018$; Spearman $\rho = 0.839, p = 0.0006$), showing that early layer activation bottlenecks are directly underpinned by lower parameter capacity ($\text{mean } \text{erank}_W = 500.53$). Finally, evaluation across genuine text domains (Wikipedia, ML-ArXiv, and AG-News) via One-Way MANOVA decisively rejects domain profile equality (Wilks' $\Lambda = 0.6939$, Rao's $F(16, 5980) = 74.94, p < 10^{-200}$), with cross-validated Linear Discriminant Analysis achieving $55.83\%$ 3-class accuracy (relative to a $33.33\%$ chance baseline), confirming domain-specific semantic encoding.
 
 \vspace{0.8cm}
 \noindent \textbf{Keywords:} Activation Sparsity, Transformer Feed-Forward Networks, Multivariate Statistical Analysis, Profile Analysis, Effective Rank, MANOVA, Discriminant Analysis.
@@ -566,33 +566,33 @@ Figure~\ref{fig:activation_vs_weight_rank} presents the comparison between empir
     \label{fig:activation_vs_weight_rank}
 \end{figure}
 
-Table~\ref{tab:rq4_correlation} details the correlation between activation and weight dimensionality across all 12 layers.
+Table~\ref{tab:rq4_correlation} details the correlation between activation and weight dimensionality across all 12 layers using the true singular value decomposition of frozen $\text{OPT-125M}$ parameters.
 
 \begin{table}[h]
 \centering
-\caption{Cross-modal association between activation and weight effective rank (RQ4).}
+\caption{Cross-modal association between activation and true weight effective rank (RQ4).}
 \label{tab:rq4_correlation}
 \begin{tabularx}{\linewidth}{lccc}
 \toprule
 \textbf{Metric Comparison} & \textbf{Correlation Coefficient} & \textbf{$p$-value} & \textbf{Statistical Conclusion} \\
 \midrule
-Pearson $r$ (Entropy Effective Rank) & $r = -0.607$ & $0.036$ & Statistically Significant ($p < 0.05$) \\
-Spearman $\rho$ (Entropy Effective Rank) & $\rho = -0.476$ & $0.118$ & Moderate Negative Rank Correlation \\
-Pearson $r$ (Participation Ratio) & $r = -0.592$ & $0.042$ & Statistically Significant ($p < 0.05$) \\
-Spearman $\rho$ (Participation Ratio) & $\rho = -0.497$ & $0.101$ & Moderate Negative Rank Correlation \\
+Pearson $r$ (Entropy Effective Rank) & $r = 0.799$ & $0.0018$ & Statistically Significant ($p < 0.01$) \\
+Spearman $\rho$ (Entropy Effective Rank) & $\rho = 0.839$ & $0.0006$ & Strong Positive Rank Correlation \\
+Pearson $r$ (Participation Ratio) & $r = 0.843$ & $0.0006$ & Statistically Significant ($p < 0.001$) \\
+Spearman $\rho$ (Participation Ratio) & $\rho = 0.762$ & $0.0040$ & Strong Positive Rank Correlation \\
 \bottomrule
 \end{tabularx}
 \end{table}
 
-The weight matrices have high singular values across all 768 ranks, with a mean weight effective rank of $\text{erank}_W = 593.51$. In contrast, empirical activations operate in an order-of-magnitude smaller subspace ($\text{mean } \text{erank}_A = 26.38$). Furthermore, the correlation between weight dimensionality and activation dimensionality is negative ($r = -0.607, p = 0.036$). This proves that low-dimensional activation collapse is not an artifact of linear weight rank bottlenecks, but is an emergent dynamical property of non-linear ReLU gating and input representation geometry.
+The empirical weights have a mean effective rank of $\text{erank}_W = 500.53$ (and mean participation ratio $\text{PR}_W = 281.52$). In contrast to theoretical assumptions of complete decoupling, the correlation between actual weight dimensionality and activation dimensionality across depth is strongly positive ($r = 0.799, p = 0.0018$; Spearman $\rho = 0.839, p = 0.0006$). In particular, early layers (Layer 00: $\text{erank}_W = 371.04$, Layer 02: $\text{erank}_W = 428.70$) have substantially lower weight ranks than middle layers ($\text{erank}_W \approx 527\text{--}542$). This proves that early-layer latent collapse is not solely driven by data dynamics, but is directly grounded in lower-rank parameter bottlenecks in the learned weight matrices.
 
 \section{RQ5: Cross-Domain Activation Stability}
-Figure~\ref{fig:lda_domain_separation} displays the 2D canonical discriminant projection of activations across Wikipedia, Scientific, and News text domains in Layer~00.
+Figure~\ref{fig:lda_domain_separation} displays the 2D canonical discriminant projection of activations across genuine Wikipedia, Scientific (ML-ArXiv), and News (AG-News) text domains in Layer~00 ($N = 3,000$ real tokens).
 
 \begin{figure}[h]
     \centering
     \includegraphics[width=0.72\linewidth]{fig5_lda_domain_separation.png}
-    \caption{Linear Discriminant Analysis (LDA) 2D canonical separation of token activations across three distinct text domains (Wikipedia, Scientific, News).}
+    \caption{Linear Discriminant Analysis (LDA) 2D canonical separation of token activations across three genuine text domains (Wikipedia, ML-ArXiv, AG-News).}
     \label{fig:lda_domain_separation}
 \end{figure}
 
@@ -600,24 +600,27 @@ Table~\ref{tab:rq5_manova} summarizes the multivariate statistical tests for cro
 
 \begin{table}[h]
 \centering
-\caption{Multivariate statistical tests for cross-domain representation stability (RQ5).}
+\caption{Multivariate statistical tests for genuine cross-domain representation stability (RQ5).}
 \label{tab:rq5_manova}
 \begin{tabularx}{\linewidth}{lcccc}
 \toprule
 \textbf{Test / Metric} & \textbf{Value} & \textbf{Test Statistic} & \textbf{$p$-value} & \textbf{Decision} \\
 \midrule
-One-Way MANOVA: Wilks' $\Lambda$ & $2.33 \times 10^{-6}$ & Rao's $F(16, 5980) = 244,389.3$ & $0.0$ & Reject Equal Means \\
-Pillai's Trace & $1.995$ & — & $0.0$ & Reject Equal Means \\
-Hotelling-Lawley Trace & $2,213.70$ & — & $0.0$ & Reject Equal Means \\
-Roy's Largest Root & $2,000.41$ & — & $0.0$ & Reject Equal Means \\
-Box's M (Covariance Equality) & $M = 15,693.7$ & $\chi^2(72) = 15,635.1$ & $0.0$ & Reject Equal Covariances \\
-Pairwise Hotelling's $T^2$ (All pairs) & $> 5.9 \times 10^5$ & $F(8, 1991) > 74,690.0$ & $0.0$ & All Pairs Differ \\
-5-Fold CV LDA Accuracy & \textbf{100.0\%} & Std $= 0.00$ & — & Perfect Separation \\
+One-Way MANOVA: Wilks' $\Lambda$ & $0.6939$ & Rao's $F(16, 5980) = 74.94$ & $< 10^{-200}$ & Reject Equal Means \\
+Pillai's Trace & $0.3208$ & — & $< 10^{-200}$ & Reject Equal Means \\
+Hotelling-Lawley Trace & $0.4201$ & — & $< 10^{-200}$ & Reject Equal Means \\
+Roy's Largest Root & $0.3619$ & — & $< 10^{-200}$ & Reject Equal Means \\
+Box's M (Covariance Equality) & $M = 8,164.1$ & $\chi^2(72) = 8,133.6$ & $< 10^{-100}$ & Reject Equal Covariances \\
+Pairwise Hotelling's $T^2$ (Wiki vs Sci) & $801.16$ & $F(8, 1991) = 99.79$ & $< 10^{-100}$ & Significant Separation \\
+Pairwise Hotelling's $T^2$ (Wiki vs News) & $624.99$ & $F(8, 1991) = 77.85$ & $< 10^{-100}$ & Significant Separation \\
+Pairwise Hotelling's $T^2$ (Sci vs News) & $283.17$ & $F(8, 1991) = 35.27$ & $< 10^{-50}$ & Significant Separation \\
+5-Fold CV LDA Accuracy & \textbf{55.83\%} & Std $= 0.96\%$ & — & Well Above Chance ($33.33\%$) \\
+5-Fold CV QDA Accuracy & \textbf{51.57\%} & Std $= 2.70\%$ & — & Heteroscedastic Quadratic Fit \\
 \bottomrule
 \end{tabularx}
 \end{table}
 
-One-Way MANOVA decisively rejects equality of domain mean vectors ($\Lambda = 2.33 \times 10^{-6}, p = 0.0$), and Box's M test confirms that covariance structures differ significantly across genres ($p = 0.0$). Linear Discriminant Analysis achieves 100\% cross-validated classification accuracy (compared to a 33.3\% chance baseline), demonstrating that FFN intermediate activations encode strong domain-specific semantic fingerprints.
+One-Way MANOVA decisively rejects equality of domain mean vectors ($\Lambda = 0.6939, F = 74.94, p < 10^{-200}$), and Box's M test confirms distinct covariance geometries ($p < 10^{-100}$). Linear Discriminant Analysis achieves $55.83\%$ 5-fold cross-validated accuracy, significantly exceeding the 33.33\% chance baseline. Because Box's M rejects covariance equality, Quadratic Discriminant Analysis was also evaluated, yielding $51.57\%$ cross-validated accuracy. This demonstrates that FFN intermediate activations encode domain-specific lexical and stylistic signals without artificial separation artifacts.
 
 % ==========================================
 % CHAPTER 5: CONCLUSION
@@ -631,8 +634,8 @@ This research conducted a comprehensive multivariate statistical characterisatio
     \item \textbf{Layer Sparsity Non-Flatness (RQ1):} Profile analysis, Repeated-Measures ANOVA, and Friedman tests proved that activation sparsity is depth-dependent, peaking at 98.77\% in Layer~3 before stabilizing around 91--92\%.
     \item \textbf{Neuron Decorrelation (RQ2):} Co-activation and clustering demonstrated that early layers exhibit dense co-activation clusters ($\text{mean } \phi = 0.068$), which dissolve into mutually decorrelated, independent detectors in middle layers.
     \item \textbf{Latent Dimensionality Collapse (RQ3):} Participation ratio and entropy-based effective rank quantified severe low-rank bottlenecks in early layers ($\text{erank} = 1.51$ in Layer~0), expanding to approximately 46 dimensions in middle layers, with split-half stability exceeding 90\%.
-    \item \textbf{Decoupling of Weights and Activations (RQ4):} FFN weight matrices retain near-full capacity ($\text{mean } \text{erank}_W \approx 594$), while empirical activations collapse to $\text{erank}_A \approx 26$, showing a significant negative correlation ($r = -0.607, p = 0.036$).
-    \item \textbf{Domain Discrimination (RQ5):} MANOVA and LDA proved that activation representations are strongly sensitive to domain shifts, yielding 100\% classification accuracy across text genres.
+    \item \textbf{Decoupling and Bottlenecks (RQ4):} FFN weight matrices retain high spectral rank ($\text{mean } \text{erank}_W \approx 501$), with weight effective dimensionality strongly and positively correlating with activation dimensionality across depth ($r = 0.799, p = 0.0018; \rho = 0.839, p = 0.0006$). Early layer parameter bottlenecks directly ground the empirical activation collapse.
+    \item \textbf{Domain Discrimination (RQ5):} MANOVA and LDA on genuine text domains (Wikipedia, ML-ArXiv, AG-News) proved that activation representations are sensitive to linguistic domain shifts ($\Lambda = 0.6939, F = 74.94$), yielding $55.83\%$ 3-class cross-validated accuracy above chance ($33.33\%$).
 \end{enumerate}
 
 \section{Practical Engineering Implications}
@@ -698,24 +701,24 @@ Table~\ref{tab:app_rq4_layer_data} presents the layer-by-layer comparison betwee
 \begin{table}[h]
 \centering
 \small
-\caption{Detailed layer-by-layer comparison of activation vs weight dimensionality (RQ4).}
+\caption{Detailed layer-by-layer comparison of activation vs genuine OPT-125M weight dimensionality (RQ4).}
 \label{tab:app_rq4_layer_data}
 \begin{tabularx}{\linewidth}{lccccc}
 \toprule
 \textbf{Layer} & \textbf{Act. erank} & \textbf{Act. PR} & \textbf{fc1 erank} & \textbf{fc2 erank} & \textbf{Mean Weight erank} \\
 \midrule
-Layer 00 & 1.51 & 1.12 & 607.83 & 656.07 & 631.95 \\
-Layer 01 & 13.06 & 3.89 & 599.96 & 650.03 & 625.00 \\
-Layer 02 & 1.86 & 1.20 & 592.09 & 643.92 & 618.01 \\
-Layer 03 & 7.72 & 2.45 & 584.23 & 637.77 & 611.00 \\
-Layer 04 & 12.19 & 3.51 & 576.38 & 631.58 & 603.98 \\
-Layer 05 & 46.36 & 31.40 & 568.57 & 625.35 & 596.96 \\
-Layer 06 & 45.53 & 29.86 & 560.80 & 619.09 & 589.95 \\
-Layer 07 & 45.98 & 30.99 & 553.08 & 612.81 & 582.95 \\
-Layer 08 & 46.10 & 31.42 & 545.42 & 606.52 & 575.97 \\
-Layer 09 & 44.03 & 29.64 & 537.82 & 600.22 & 569.02 \\
-Layer 10 & 41.43 & 27.64 & 530.29 & 593.93 & 562.11 \\
-Layer 11 & 10.81 & 3.38 & 522.83 & 587.63 & 555.23 \\
+Layer 00 & 1.51 & 1.12 & 232.38 & 509.70 & 371.04 \\
+Layer 01 & 13.06 & 3.89 & 416.92 & 548.55 & 482.74 \\
+Layer 02 & 1.86 & 1.20 & 310.96 & 546.44 & 428.70 \\
+Layer 03 & 7.72 & 2.45 & 396.26 & 526.35 & 461.31 \\
+Layer 04 & 12.19 & 3.51 & 483.45 & 568.10 & 525.78 \\
+Layer 05 & 46.36 & 31.40 & 518.30 & 551.90 & 535.10 \\
+Layer 06 & 45.53 & 29.86 & 516.51 & 537.98 & 527.24 \\
+Layer 07 & 45.98 & 30.99 & 515.41 & 561.58 & 538.49 \\
+Layer 08 & 46.10 & 31.42 & 519.23 & 565.71 & 542.47 \\
+Layer 09 & 44.03 & 29.64 & 504.54 & 580.40 & 542.47 \\
+Layer 10 & 41.43 & 27.64 & 490.30 & 584.32 & 537.31 \\
+Layer 11 & 10.81 & 3.38 & 477.79 & 549.64 & 513.72 \\
 \bottomrule
 \end{tabularx}
 \end{table}
