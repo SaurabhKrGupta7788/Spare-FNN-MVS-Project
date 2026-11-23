@@ -1,0 +1,75 @@
+{
+  "phase": "rq5_domain_stability",
+  "description": "Evaluation of mean vector and covariance stability across text domains.",
+  "target_layer": "layer_00",
+  "n_samples_per_domain": {
+    "wikipedia": 1000,
+    "scientific": 1000,
+    "news": 1000
+  },
+  "pca_reduced_components": 8,
+  "manova": {
+    "test": "One-Way MANOVA",
+    "n_total": 3000,
+    "n_groups": 3,
+    "n_features": 8,
+    "wilks_lambda": 2.331688859307485e-06,
+    "rao_f_statistic": 244389.32602677206,
+    "df1": 16.0,
+    "df2": 5980.0,
+    "p_value": 0.0,
+    "pillai_trace": 1.9948336855590179,
+    "hotelling_lawley_trace": 2213.696326874711,
+    "roys_largest_root": 2000.4106208995038,
+    "decision": "reject_equal_domain_means"
+  },
+  "pairwise_hotelling_t2": [
+    {
+      "domain_1": "wikipedia",
+      "domain_2": "scientific",
+      "hotelling_t2": 4521293.7290334515,
+      "f_statistic": 563181.6700766768,
+      "df1": 8,
+      "df2": 1991,
+      "p_value": 0.0,
+      "decision": "reject_equal_means"
+    },
+    {
+      "domain_1": "wikipedia",
+      "domain_2": "news",
+      "hotelling_t2": 599622.4916656953,
+      "f_statistic": 74690.21402067064,
+      "df1": 8,
+      "df2": 1991,
+      "p_value": 0.0,
+      "decision": "reject_equal_means"
+    },
+    {
+      "domain_1": "scientific",
+      "domain_2": "news",
+      "hotelling_t2": 3995205.7071408145,
+      "f_statistic": 497651.0612435787,
+      "df1": 8,
+      "df2": 1991,
+      "p_value": 0.0,
+      "decision": "reject_equal_means"
+    }
+  ],
+  "box_m_test": {
+    "test": "Box's M test for equality of covariance matrices",
+    "box_m_statistic": 15693.699108455257,
+    "chi2_statistic": 15635.128227317904,
+    "degrees_of_freedom": 72.0,
+    "p_value": 0.0,
+    "decision": "reject_equal_covariances"
+  },
+  "lda_classification": {
+    "mean_cross_validated_accuracy": 1.0,
+    "cv_accuracy_std": 0.0,
+    "explained_variance_ratio": [
+      0.903651773929596,
+      0.09634827822446823
+    ],
+    "baseline_chance_accuracy": 0.3333333333333333
+  }
+}

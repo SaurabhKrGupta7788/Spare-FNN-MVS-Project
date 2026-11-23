@@ -1,0 +1,132 @@
+{
+  "phase": "rq4_weight_rank",
+  "description": "Comparison of empirical activation dimensionality and static FFN weight matrix rank.",
+  "analysis_dir": "C:\\Users\\100ra\\Desktop\\sparse_ffn_mvs_project\\sparse_ffn_mvs_project\\artifacts\\analysis\\train\\20261111_145231_facebook--opt-125m",
+  "weights_saved_to": "C:\\Users\\100ra\\Desktop\\sparse_ffn_mvs_project\\sparse_ffn_mvs_project\\artifacts\\analysis\\train\\20261111_145231_facebook--opt-125m\\rq4_weight_rank\\opt_125m_ffn_weights.npz",
+  "correlation_metrics": {
+    "n_layers": 12,
+    "pearson_correlation_entropy_effective_rank": -0.606968476635787,
+    "pearson_p_value_entropy_effective_rank": 0.036360248644711046,
+    "spearman_correlation_entropy_effective_rank": -0.4755244755244756,
+    "spearman_p_value_entropy_effective_rank": 0.118175957013032,
+    "pearson_correlation_participation_ratio": -0.5923250726687922,
+    "pearson_p_value_participation_ratio": 0.04242380091007881,
+    "spearman_correlation_participation_ratio": -0.49650349650349657,
+    "spearman_p_value_participation_ratio": 0.10060263183225476,
+    "mean_activation_entropy_erank": 26.381240511461773,
+    "mean_weight_entropy_erank": 593.5097552893745,
+    "mean_activation_participation_ratio": 16.375338124831934,
+    "mean_weight_participation_ratio": 498.9661428690525,
+    "conclusion": "Activation effective dimensionality and weight effective dimensionality have Spearman rank correlation rho=-0.476 (p=0.1182). Activations operate in a significantly lower-dimensional subspace than the theoretical rank capacity of the weight matrices."
+  },
+  "layer_data": [
+    {
+      "layer": "layer_00",
+      "entropy_effective_rank": 1.5070345148955615,
+      "participation_ratio": 1.1219864602831322,
+      "fc1_entropy_effective_rank": 607.8337630215932,
+      "fc2_entropy_effective_rank": 656.0706081448195,
+      "mean_weight_entropy_effective_rank": 631.9521855832063,
+      "mean_weight_participation_ratio": 547.0075588452419
+    },
+    {
+      "layer": "layer_01",
+      "entropy_effective_rank": 13.058782146318729,
+      "participation_ratio": 3.889951640377509,
+      "fc1_entropy_effective_rank": 599.9619748637073,
+      "fc2_entropy_effective_rank": 650.0261859027012,
+      "mean_weight_entropy_effective_rank": 624.9940803832042,
+      "mean_weight_participation_ratio": 537.8223049291038
+    },
+    {
+      "layer": "layer_02",
+      "entropy_effective_rank": 1.8629454778263212,
+      "participation_ratio": 1.200135064185645,
+      "fc1_entropy_effective_rank": 592.0890442131741,
+      "fc2_entropy_effective_rank": 643.9237165908426,
+      "mean_weight_entropy_effective_rank": 618.0063804020083,
+      "mean_weight_participation_ratio": 528.7561273837555
+    },
+    {
+      "layer": "layer_03",
+      "entropy_effective_rank": 7.718391928034494,
+      "participation_ratio": 2.450398077358897,
+      "fc1_entropy_effective_rank": 584.2263873813554,
+      "fc2_entropy_effective_rank": 637.7712291736092,
+      "mean_weight_entropy_effective_rank": 610.9988082774823,
+      "mean_weight_participation_ratio": 519.8180800009804
+    },
+    {
+      "layer": "layer_04",
+      "entropy_effective_rank": 12.190155622189268,
+      "participation_ratio": 3.512220479805401,
+      "fc1_entropy_effective_rank": 576.3847133809962,
+      "fc2_entropy_effective_rank": 631.5765107312276,
+      "mean_weight_entropy_effective_rank": 603.9806120561119,
+      "mean_weight_participation_ratio": 511.01590001963524
+    },
+    {
+      "layer": "layer_05",
+      "entropy_effective_rank": 46.36349144384909,
+      "participation_ratio": 31.402047068177392,
+      "fc1_entropy_effective_rank": 568.5740258994664,
+      "fc2_entropy_effective_rank": 625.3471121660467,
+      "mean_weight_entropy_effective_rank": 596.9605690327566,
+      "mean_weight_participation_ratio": 502.35612462289674
+    },
+    {
+      "layer": "layer_06",
+      "entropy_effective_rank": 45.53085058347023,
+      "participation_ratio": 29.8585953139573,
+      "fc1_entropy_effective_rank": 560.8036294644529,
+      "fc2_entropy_effective_rank": 619.0903213103304,
+      "mean_weight_entropy_effective_rank": 589.9469753873916,
+      "mean_weight_participation_ratio": 493.8441729845356
+    },
+    {
+      "layer": "layer_07",
+      "entropy_effective_rank": 45.97951856440312,
+      "participation_ratio": 30.9902756650902,
+      "fc1_entropy_effective_rank": 553.0821307413769,
+      "fc2_entropy_effective_rank": 612.813163986908,
+      "mean_weight_entropy_effective_rank": 582.9476473641424,
+      "mean_weight_participation_ratio": 485.4844413641746
+    },
+    {
+      "layer": "layer_08",
+      "entropy_effective_rank": 46.09928471105948,
+      "participation_ratio": 31.417663540252896,
+      "fc1_entropy_effective_rank": 545.4174726283813,
+      "fc2_entropy_effective_rank": 606.522384770464,
+      "mean_weight_entropy_effective_rank": 575.9699286994227,
+      "mean_weight_participation_ratio": 477.2803985434691
+    },
+    {
+      "layer": "layer_09",
+      "entropy_effective_rank": 44.02642575863338,
+      "participation_ratio": 29.64115007193564,
+      "fc1_entropy_effective_rank": 537.8169310462781,
+      "fc2_entropy_effective_rank": 600.2244552452007,
+      "mean_weight_entropy_effective_rank": 569.0206931457394,
+      "mean_weight_participation_ratio": 469.23466744810787
+    },
+    {
+      "layer": "layer_10",
+      "entropy_effective_rank": 41.42685761734744,
+      "participation_ratio": 27.64220852132802,
+      "fc1_entropy_effective_rank": 530.2871348909816,
+      "fc2_entropy_effective_rank": 593.9255518458882,
+      "mean_weight_entropy_effective_rank": 562.1063433684349,
+      "mean_weight_participation_ratio": 461.34909230159036
+    },
+    {
+      "layer": "layer_11",
+      "entropy_effective_rank": 10.811147769514127,
+      "participation_ratio": 3.377425595231152,
+      "fc1_entropy_effective_rank": 522.8341039458173,
+      "fc2_entropy_effective_rank": 587.6315755993714,
+      "mean_weight_entropy_effective_rank": 555.2328397725944,
+      "mean_weight_participation_ratio": 453.6248459851385
+    }
+  ]
+}

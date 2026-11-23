@@ -13,3 +13,16 @@ data/raw/
 data/processed/
 artifacts/
 *.log
+
+# LaTeX temporary build files
+*.aux
+*.nav
+*.snm
+*.out
+*.toc
+*.synctex*
+*.bbl
+*.blg
+*.fdb_latexmk
+*.fls
+
