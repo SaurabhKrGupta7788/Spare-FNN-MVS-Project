@@ -1,0 +1,178 @@
+{
+  "project_metadata": {
+    "title": "Statistical Characterisation of Sparse Activations and Low-Rank Latent Structures in Dense Feed-Forward Neural Networks",
+    "course": "CSP 1602: Multivariate Statistical Analysis",
+    "institution": "National Institute of Technology Mizoram",
+    "authors": [
+      { "name": "Lakshmi Ganapathi Kodi", "roll_no": "BT23MA005" },
+      { "name": "Saurabh Kumar Guptha", "roll_no": "BT23MA006" }
+    ],
+    "supervisor": "Dr. C Lalengmawia",
+    "target_model": "facebook/opt-125m",
+    "model_architecture": {
+      "layers": 12,
+      "hidden_dim": 768,
+      "ffn_dim": 3072,
+      "activation_function": "ReLU",
+      "target_hook": "post-ReLU, pre-fc2"
+    }
+  },
+  "phase_1_descriptive_sparsity": {
+    "token_count": 5120,
+    "block_count": 40,
+    "block_size": 128,
+    "layer_zero_fractions": {
+      "layer_00": 0.889567,
+      "layer_01": 0.974855,
+      "layer_02": 0.979205,
+      "layer_03": 0.987719,
+      "layer_04": 0.966471,
+      "layer_05": 0.932332,
+      "layer_06": 0.914421,
+      "layer_07": 0.918042,
+      "layer_08": 0.922814,
+      "layer_09": 0.924089,
+      "layer_10": 0.911582,
+      "layer_11": 0.914876
+    },
+    "key_observations": [
+      "Layer 3 exhibits peak sparsity of 98.77%, where median neuron activation frequency is 0.058% (~38 active neurons out of 3,072).",
+      "Layers 0-3 form an early input-filtering bottleneck.",
+      "Layers 4-10 plateau around 91-93% sparsity.",
+      "Layer 11 shows high positive activation amplitude (mean = 0.2517, std = 0.3145)."
+    ]
+  },
+  "rq1_profile_analysis": {
+    "sample_units": "40 independent 128-token text blocks",
+    "dimension": 12,
+    "hotelling_t2_contrast_flatness": {
+      "statistic_T2": 602912.24,
+      "f_statistic": 40756.31,
+      "df1": 11,
+      "df2": 29,
+      "p_value": 1.25e-57,
+      "decision": "reject_flat_profile"
+    },
+    "repeated_measures_anova": {
+      "f_statistic": 1838.82,
+      "df1": 11,
+      "df2": 429,
+      "p_value_uncorrected": 0.0,
+      "greenhouse_geisser_epsilon": 0.12527,
+      "p_value_greenhouse_geisser": 1.68e-46,
+      "decision": "reject_equal_layer_sparsity"
+    },
+    "friedman_test": {
+      "statistic_Q": 432.99,
+      "df": 11,
+      "p_value": 5.99e-86,
+      "decision": "reject_equal_layer_sparsity"
+    }
+  },
+  "rq2_neuron_dependence": {
+    "sampling": "128 prevalence-filtered neurons (0.01 <= f <= 0.99)",
+    "layer_00": {
+      "mean_pairwise_phi": 0.06846,
+      "median_pairwise_phi": 0.04218,
+      "fraction_positive_phi": 0.7682,
+      "clusters_at_threshold_0_7": 94
+    },
+    "layer_06": {
+      "mean_pairwise_phi": 0.00669,
+      "median_pairwise_phi": -0.01160,
+      "fraction_positive_phi": 0.3701,
+      "clusters_at_threshold_0_7": 122
+    },
+    "conclusion": "Dense co-activation clusters present in Layer 0 dissolve into mutually decorrelated, near-orthogonal feature detectors by Layer 6."
+  },
+  "rq3_latent_structure": {
+    "method": "Covariance-based PCA on centred, unstandardised activations (N = 5000 tokens)",
+    "layer_dimensionalities": {
+      "layer_00": { "erank": 1.51, "pr": 1.12, "k80": 1, "stability_k10": 0.941, "recon_error_k10": 0.0788 },
+      "layer_01": { "erank": 13.06, "pr": 3.89, "k80": ">64", "stability_k10": 0.939, "recon_error_k10": 0.4692 },
+      "layer_02": { "erank": 1.86, "pr": 1.20, "k80": 1, "stability_k10": 0.918, "recon_error_k10": 0.1125 },
+      "layer_03": { "erank": 7.72, "pr": 2.45, "k80": ">64", "stability_k10": 0.968, "recon_error_k10": 0.3861 },
+      "layer_04": { "erank": 12.19, "pr": 3.51, "k80": ">64", "stability_k10": 0.948, "recon_error_k10": 0.4927 },
+      "layer_05": { "erank": 46.36, "pr": 31.40, "k80": ">64", "stability_k10": 0.914, "recon_error_k10": 0.7917 },
+      "layer_06": { "erank": 45.53, "pr": 29.86, "k80": ">64", "stability_k10": 0.878, "recon_error_k10": 0.7911 },
+      "layer_07": { "erank": 45.98, "pr": 30.99, "k80": ">64", "stability_k10": 0.898, "recon_error_k10": 0.7977 },
+      "layer_08": { "erank": 46.10, "pr": 31.42, "k80": ">64", "stability_k10": 0.919, "recon_error_k10": 0.7933 },
+      "layer_09": { "erank": 44.03, "pr": 29.64, "k80": ">64", "stability_k10": 0.885, "recon_error_k10": 0.7744 },
+      "layer_10": { "erank": 41.43, "pr": 27.64, "k80": ">64", "stability_k10": 0.913, "recon_error_k10": 0.7212 },
+      "layer_11": { "erank": 10.81, "pr": 3.38, "k80": ">64", "stability_k10": 0.941, "recon_error_k10": 0.3978 }
+    }
+  },
+  "rq4_weight_vs_activation_rank_REAL": {
+    "source": "True singular value decomposition of actual facebook/opt-125m weights",
+    "mean_weight_erank": 500.53,
+    "mean_weight_pr": 281.52,
+    "mean_activation_erank": 26.38,
+    "mean_activation_pr": 16.38,
+    "correlation_metrics": {
+      "pearson_r_erank": 0.7991,
+      "pearson_p_erank": 0.00182,
+      "spearman_rho_erank": 0.8392,
+      "spearman_p_erank": 0.00064,
+      "pearson_r_pr": 0.8432,
+      "pearson_p_pr": 0.00057,
+      "spearman_rho_pr": 0.7622,
+      "spearman_p_pr": 0.00395
+    },
+    "layer_table_B1": [
+      { "layer": "Layer 00", "act_erank": 1.51, "act_pr": 1.12, "fc1_erank": 232.38, "fc2_erank": 509.70, "mean_weight_erank": 371.04 },
+      { "layer": "Layer 01", "act_erank": 13.06, "act_pr": 3.89, "fc1_erank": 416.92, "fc2_erank": 548.55, "mean_weight_erank": 482.74 },
+      { "layer": "Layer 02", "act_erank": 1.86, "act_pr": 1.20, "fc1_erank": 310.96, "fc2_erank": 546.44, "mean_weight_erank": 428.70 },
+      { "layer": "Layer 03", "act_erank": 7.72, "act_pr": 2.45, "fc1_erank": 396.26, "fc2_erank": 526.35, "mean_weight_erank": 461.31 },
+      { "layer": "Layer 04", "act_erank": 12.19, "act_pr": 3.51, "fc1_erank": 483.45, "fc2_erank": 568.10, "mean_weight_erank": 525.78 },
+      { "layer": "Layer 05", "act_erank": 46.36, "act_pr": 31.40, "fc1_erank": 518.30, "fc2_erank": 551.90, "mean_weight_erank": 535.10 },
+      { "layer": "Layer 06", "act_erank": 45.53, "act_pr": 29.86, "fc1_erank": 516.51, "fc2_erank": 537.98, "mean_weight_erank": 527.24 },
+      { "layer": "Layer 07", "act_erank": 45.98, "act_pr": 30.99, "fc1_erank": 515.41, "fc2_erank": 561.58, "mean_weight_erank": 538.49 },
+      { "layer": "Layer 08", "act_erank": 46.10, "act_pr": 31.42, "fc1_erank": 519.23, "fc2_erank": 565.71, "mean_weight_erank": 542.47 },
+      { "layer": "Layer 09", "act_erank": 44.03, "act_pr": 29.64, "fc1_erank": 504.54, "fc2_erank": 580.40, "mean_weight_erank": 542.47 },
+      { "layer": "Layer 10", "act_erank": 41.43, "act_pr": 27.64, "fc1_erank": 490.30, "fc2_erank": 584.32, "mean_weight_erank": 537.31 },
+      { "layer": "Layer 11", "act_erank": 10.81, "act_pr": 3.38, "fc1_erank": 477.79, "fc2_erank": 549.64, "mean_weight_erank": 513.72 }
+    ],
+    "scientific_conclusion": "Strong positive coupling across depth (rho = 0.839, p = 0.0006). Early layer activation bottlenecks are directly reinforced by lower parameter ranks (erank_W ~ 371-428) in fc1/fc2."
+  },
+  "rq5_domain_stability_REAL": {
+    "source": "Genuine multi-domain token extraction on frozen OPT-125M Layer 00 (N = 3000 tokens, 1000 per domain)",
+    "domains": [
+      { "name": "Wikipedia", "source": "Salesforce/wikitext (wikitext-2-raw-v1)", "tokens": 1000 },
+      { "name": "Scientific", "source": "CShorten/ML-ArXiv-Papers (arXiv papers)", "tokens": 1000 },
+      { "name": "News", "source": "ag_news (world news headlines/articles)", "tokens": 1000 }
+    ],
+    "pca_reduced_components": 8,
+    "manova": {
+      "wilks_lambda": 0.693858,
+      "rao_f_statistic": 74.94,
+      "df1": 16.0,
+      "df2": 5980.0,
+      "p_value": 7.86e-223,
+      "pillai_trace": 0.32077,
+      "hotelling_lawley_trace": 0.42013,
+      "roys_largest_root": 0.36187,
+      "decision": "reject_equal_domain_means"
+    },
+    "box_m_test": {
+      "box_m_statistic": 8164.09,
+      "chi2_statistic": 8133.62,
+      "df": 72.0,
+      "p_value": 0.0,
+      "decision": "reject_equal_covariances"
+    },
+    "pairwise_hotelling_t2": [
+      { "pair": "Wikipedia vs Scientific", "hotelling_t2": 801.16, "f_statistic": 99.79, "df1": 8, "df2": 1991, "p_value": 6.58e-140 },
+      { "pair": "Wikipedia vs News", "hotelling_t2": 624.99, "f_statistic": 77.85, "df1": 8, "df2": 1991, "p_value": 4.84e-112 },
+      { "pair": "Scientific vs News", "hotelling_t2": 283.17, "f_statistic": 35.27, "df1": 8, "df2": 1991, "p_value": 1.61e-52 }
+    ],
+    "classification": {
+      "lda_5fold_cv_accuracy": 0.5583,
+      "lda_cv_std": 0.0096,
+      "qda_5fold_cv_accuracy": 0.5157,
+      "qda_cv_std": 0.0270,
+      "baseline_chance_accuracy": 0.3333,
+      "explained_variance_ratio": [0.8613, 0.1387]
+    },
+    "scientific_conclusion": "Decisively rejects equality of domain mean vectors (Wilks Lambda = 0.6939, Rao F = 74.94) and covariance equality (Box M Chi2 = 8133.62). 5-fold CV LDA achieves 55.83% and QDA achieves 51.57% (well above 33.33% chance), confirming genuine domain sensitivity without synthetic 100% ceiling artifacts."
+  }
+}
