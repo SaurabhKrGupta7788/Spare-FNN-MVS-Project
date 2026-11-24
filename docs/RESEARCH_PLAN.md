@@ -1,58 +1,74 @@
-# Research plan and analysis boundaries
+# Research Plan and Analysis Methodology
 
-Aligned with **Project Proposal: Statistical Characterisation of Sparse Activations and Low-Rank Latent Structures in Dense Feed-Forward Neural Networks**
-- Team: Lakshmi Ganapathi Kodi (BT23MA005), Saurabh Kumar Guptha (BT23MA006)
-- Course: Multivariate Statistical Analysis (Semester 7)
+**Project:** Statistical Characterisation of Sparse Activations and Low-Rank Latent Structures in Dense Feed-Forward Neural Networks  
+**Course:** CSP 1602: Multivariate Statistical Analysis (Semester 7, November 2026)  
+**Authors:** Lakshmi Ganapathi Kodi (BT23MA005) & Saurabh Kumar Gupta (BT23MA006)  
+**Supervisor:** Prof. Ashis SenGupta, Applied Statistics Unit, Indian Statistical Institute, Kolkata  
+**Department:** Department of Mathematics and Computing, National Institute of Technology Mizoram  
 
-## Main research objective
+---
 
-Study whether dense FFN intermediate activations show (i) activation sparsity, (ii) pairwise statistical dependence between neurons, and (iii) a lower-dimensional covariance/factor structure across network depth, weight capacity, and text domains.
+## 1. Research Objectives
 
-## Phase 1 — descriptive analysis (implemented)
+This investigation characterises the internal representation geometry of dense Transformer Feed-Forward Networks (FFNs) using classical multivariate mathematical statistics. Studying the intermediate post-ReLU activation space of `facebook/opt-125m` ($12$ layers, $d_{\text{ff}} = 3{,}072$), we evaluate five core research questions:
 
-For every FFN layer, compute zero/positive fractions, token-wise sparsity distributions, neuron activation frequencies, activation magnitude summaries and sampled positive-value distribution summaries.
+1. **RQ1 (Layer-Wise Sparsity Non-Flatness):** Does activation sparsity exhibit significant profile non-flatness across network depth?
+2. **RQ2 (Neuron Co-Activation & Modularity):** Do individual neurons fire independently, or do they form correlated functional modules?
+3. **RQ3 (Latent Intrinsic Dimensionality):** How many orthogonal principal axes capture the majority of activation variance across layers?
+4. **RQ4 (Static Weights vs. Dynamic Activations):** Does static weight SVD capacity determine or decouple from empirical activation rank?
+5. **RQ5 (Cross-Domain Representation Invariance):** Are latent activation manifolds invariant across text domains, or do they encode domain-specific signatures?
 
-## RQ1 — profile analysis of layer-wise sparsity (implemented)
+---
 
-- **Sampling unit:** a text block. Every block has one average sparsity value for each FFN layer.
-- **Data matrix:** blocks by layers.
-- **Multivariate methods:**
-  - One-sample Hotelling's $T^2$ test on contrast vectors against the reference layer (Layer 0).
-  - Repeated-measures ANOVA with Mauchly's sphericity check and Greenhouse-Geisser adjustment ($\hat{\epsilon}$).
-  - Non-parametric Friedman test for repeated measures across layers.
-  - Post-hoc pairwise comparisons with Holm-Bonferroni correction.
-- **Outputs:** layer mean profile and confidence intervals, ANOVA table, Friedman test statistic, post-hoc p-values, and mean sparsity profile plot.
+## 2. Experimental Pipeline and Sampling Scheme
 
-## RQ2 — joint, marginal and conditional neuron distributions (implemented)
+- **Base Architecture:** `facebook/opt-125m` (12 decoder layers, 12 attention heads, $d = 768$, $d_{\text{ff}} = 3{,}072$, exact-zero ReLU activations).
+- **Benchmark Corpus:** WikiText-2 raw split ($M = 5{,}120$ evaluation tokens partitioned into $n = 40$ non-overlapping blocks of $B = 128$ tokens).
+- **Multi-Domain Corpora (RQ5):** $N = 3{,}000$ tokens ($1{,}000$ each from Wikipedia, ML-ArXiv scientific abstracts, and AG-News).
+- **Activation Capture Point:** Captured post-ReLU and pre-`fc2` (the intermediate expansion dimension $\mathbb{R}^{3{,}072}$). Non-padding tokens retained; stored as float16 tensors.
 
-- Convert each selected neuron's post-ReLU activation into a binary active/inactive indicator.
-- Apply a configured prevalence filter ($0.01 \le p \le 0.99$) and reproducibly sample a manageable neuron subset (128 neurons).
-- Estimate marginal activation probabilities, pairwise joint probabilities, conditional activation probabilities, the binary-indicator covariance matrix and phi correlation matrix.
-- Apply hierarchical agglomerative cluster analysis to the selected-neuron phi-correlation matrix using average linkage on correlation distance ($1 - \phi$).
-- **Outputs:** probability tables, covariance/correlation matrices, heatmaps, cluster assignments, and dendrograms.
+---
 
-## RQ3 — PCA, effective dimensionality, and exploratory factor analysis (implemented)
+## 3. Multivariate Methodology by Research Question
 
-- **PCA:** centre but do not variance-standardise the activation variables. Use covariance-based PCA to report eigenvalues, explained-variance ratios, cumulative variance and scree plots.
-- **Effective dimensionality:** calculate participation ratio $\text{PR} = (\sum \lambda_i)^2 / \sum \lambda_i^2$ and entropy-based effective rank $\text{erank} = \exp(-\sum p_i \ln p_i)$ for every layer.
-- **Validation:** estimate reconstruction error curves as a function of $K$ and evaluate sampling stability via split-half cross-sample subspace cosine similarity.
-- **Factor analysis:** fit exploratory Gaussian factor models with selected factor counts ($K \in \{2, 5, 10\}$) and varimax rotation on a prevalence-filtered subset of neurons. Report loadings, communalities, uniquenesses and covariance-reproduction error.
+### Phase 1: Descriptive Statistics and Distributional Taxonomy
+- For each layer $\ell \in \{0, \dots, 11\}$: zero fraction $\hat{\zeta}^{(\ell)}$, active neuron count, positive-tail mean, standard deviation, skewness, and excess kurtosis.
+- Establishes that post-ReLU activations follow a zero-inflated semi-continuous mixture distribution with point mass at zero and heavy positive tails.
 
-## RQ4 — activation versus weight effective dimension (implemented)
+### RQ1: Profile Analysis of Layer-Wise Sparsity
+- **Sampling Unit:** Independent text block ($n = 40$ blocks, $q = 12$ layers).
+- **Hypothesis:** $\mathcal{H}_0: \boldsymbol{\mu}_{\text{sparse}} = \zeta_0 \mathbf{1}_{12}$.
+- **Statistical Tests:**
+  - One-sample Hotelling's $T^2$ test on contrast vectors $\mathbf{C} \in \mathbb{R}^{11 \times 12}$ ($T^2 = 602{,}912.24$, $F(11, 29) = 40{,}756.31$, $p = 1.25 \times 10^{-57}$).
+  - Repeated-Measures ANOVA ($F(11, 429) = 1{,}838.82$, $p < 10^{-300}$).
+  - Greenhouse-Geisser sphericity correction ($\hat{\epsilon} = 0.1253$, $F^* = 1{,}838.82$, $p = 1.68 \times 10^{-46}$).
+  - Non-parametric Friedman rank test ($Q = 432.99$, $\text{df} = 11$, $p = 5.99 \times 10^{-86}$).
 
-- **Weight SVD:** extract incoming ($\text{fc1}: 3072 \times 768$) and outgoing ($\text{fc2}: 768 \times 3072$) weight matrices for all 12 FFN layers and compute Singular Value Decomposition.
-- **Weight effective rank:** compute participation ratio and entropy-based effective rank from singular-value spectra.
-- **Cross-modal comparison:** compute Pearson correlation ($r$) and Spearman rank correlation ($\rho$) between activation effective dimensionality and weight effective dimensionality across depth.
-- **Outputs:** `weight_svd_summary.csv`, `activation_vs_weight_dimensionality.csv`, `activation_vs_weight_rank.png`, and report.
+### RQ2: Binary Co-Activation Dependence and Hierarchical Clustering
+- **Coordinate Selection:** Prevalence filter $0.01 \le \hat{\pi}_j \le 0.99$ to remove inactive dead units; $m = 128$ sampled units.
+- **Metrics:** Pairwise joint probability $\pi_{jk}$, marginal probabilities, and Pearson $\phi$-correlation coefficients:
+  $$\phi_{jk} = \frac{\pi_{jk} - \pi_j \pi_k}{\sqrt{\pi_j(1-\pi_j)\pi_k(1-\pi_k)}}$$
+- **Hierarchical Clustering:** Average-linkage agglomerative clustering on distance metric $d_{jk} = 1 - \phi_{jk}$ at cutoff $d = 0.70$.
+- **Key Finding:** Non-monotonic U-shaped dependence: early coupling ($\bar{\phi} = +0.0685$, 94 clusters in Layer 00), near-orthogonal interior ($\bar{\phi} \approx 0.004$, 122 clusters in Layer 06), and output re-coupling ($\bar{\phi} = 0.0391$, 94 clusters in Layer 11).
 
-## RQ5 — cross-domain stability (implemented)
+### RQ3: Covariance PCA, Effective Rank, and Subspace Stability
+- **Unstandardised Covariance PCA:** Principal component decomposition on centered activation matrix $\mathbf{S}^{(\ell)} = \frac{1}{N-1} \mathbf{X}_c^\top \mathbf{X}_c$.
+- **Continuous Dimensionality Metrics:**
+  - Participation Ratio: $\text{PR} = (\sum \lambda_i)^2 / \sum \lambda_i^2$
+  - Roy-Vetterli Entropy Effective Rank: $\text{erank} = \exp\left(-\sum p_i \ln p_i\right)$, where $p_i = \lambda_i / \sum \lambda_k$.
+- **Subspace Stability:** Split-half cross-validation evaluating the mean cosine of principal angles $\bar{\rho}_{10} \ge 0.878$.
+- **Key Finding:** Severe rank collapse at early bottleneck (Layer 00 $\text{erank} = 1.51$), expanding to broad middle-layer feature manifolds (Layer 05–08 $\text{erank} \approx 45\text{--}46$), then compressing at output (Layer 11 $\text{erank} = 10.81$).
 
-- **Domains:** assess activations across 3 text domains (Wikipedia, Scientific articles, News articles).
-- **Dimension reduction:** project activations to a reduced set of principal components ($K = 8$) to guarantee non-singular sample covariance matrices ($N \gg K$).
-- **Multivariate tests:**
-  - Construct sample mean vectors and sample covariance matrices for each domain.
-  - Two-sample Hotelling's $T^2$ tests for pairwise domain comparisons.
-  - One-Way MANOVA across all 3 domains reporting Wilks' Lambda, Pillai's trace, Hotelling-Lawley trace, Roy's root, and Rao's $F$-test.
-  - Test of equality of covariance matrices using Box's M test and Frobenius distance.
-  - Linear Discriminant Analysis (LDA) with 5-fold cross-validated domain classification accuracy and 2D canonical discriminant projection.
-- **Outputs:** `domain_mean_vectors.csv`, `domain_covariance_matrices.csv`, `pairwise_hotelling_t2.csv`, `manova_summary.csv`, `box_m_test.csv`, `lda_classification_report.csv`, `lda_domain_separation.png`, and report.
+### RQ4: Static Weight Singular Spectra vs. Dynamic Activation Geometry
+- **Weight Matrix SVD:** SVD on actual OPT-125M weight matrices $\mathbf{W}_{\text{fc1}} \in \mathbb{R}^{3072 \times 768}$ and $\mathbf{W}_{\text{fc2}} \in \mathbb{R}^{768 \times 3072}$.
+- **Association Metrics:** Pearson correlation $r = 0.7991$ ($p = 0.0018$) and Spearman rank correlation $\rho = 0.8392$ ($p = 0.00064$).
+- **Key Finding:** While static weight spectral capacity correlates with activation rank across depth, weight matrices maintain an order of magnitude higher effective rank ($\text{mean weight erank} \approx 500.5$ vs. $\text{activation erank} \approx 26.4$). Static parameter capacity is an upper bound, not a surrogate for dynamic rank.
+
+### RQ5: Cross-Domain Manifold Invariance and Discriminant Analysis
+- **Domain Corpora:** 3 populations ($n_g = 1{,}000$ per domain) projected onto $K = 8$ PCA subspace.
+- **Multivariate Tests:**
+  - One-Way MANOVA: Wilks' $\Lambda = 0.6939$ (Rao $F(16, 5980) = 74.94, p = 7.86 \times 10^{-223}$).
+  - Pairwise Hotelling's Two-Sample $T^2$: All domain pairs reject equal centroids ($p < 10^{-50}$).
+  - Box's M Test: $\chi^2(72) = 8{,}133.62$ ($p < 10^{-300}$), decisively rejecting covariance equality.
+  - Supervised Classification (5-Fold Cross-Validation): Linear Discriminant Analysis ($55.83\% \pm 0.96\%$) and Quadratic Discriminant Analysis ($51.57\% \pm 2.70\%$) against chance baseline ($33.33\%$).
+- **Key Finding:** FFN intermediate activations are domain-sensitive, establishing that generic pre-trained representations adapt their geometric distributions to incoming linguistic domains.

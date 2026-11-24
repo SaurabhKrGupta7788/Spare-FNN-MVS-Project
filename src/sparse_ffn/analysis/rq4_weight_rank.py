@@ -60,6 +60,10 @@ def load_or_extract_ffn_weights(
     Returns dict mapping layer_name (e.g. 'layer_00') to:
         {'fc1_weight': np.ndarray (3072, 768), 'fc2_weight': np.ndarray (768, 3072)}
     """
+    default_real = Path(__file__).resolve().parent.parent.parent.parent / "artifacts" / "analysis" / "train" / "opt_125m_ffn_weights_real.npz"
+    if weights_path is None and default_real.is_file():
+        weights_path = default_real
+
     if weights_path is not None and Path(weights_path).is_file():
         path = Path(weights_path)
         logger.info("Loading pre-saved FFN weights from %s", path)
@@ -72,6 +76,20 @@ def load_or_extract_ffn_weights(
                 w_out = data[f"{name}_fc2"]
                 weights[name] = {"fc1_weight": w_in, "fc2_weight": w_out}
             return weights
+
+    try:
+        from transformers import AutoModelForCausalLM
+        logger.info("Loading REAL weights directly from facebook/opt-125m")
+        model = AutoModelForCausalLM.from_pretrained("facebook/opt-125m")
+        weights = {}
+        for i, layer in enumerate(model.model.decoder.layers[:n_layers]):
+            name = f"layer_{i:02d}"
+            w_in = layer.fc1.weight.detach().cpu().numpy().astype(np.float32)
+            w_out = layer.fc2.weight.detach().cpu().numpy().astype(np.float32)
+            weights[name] = {"fc1_weight": w_in, "fc2_weight": w_out}
+        return weights
+    except Exception as exc:
+        logger.warning("Could not load real OPT-125M weights (%s); falling back to calibrated synthesis", exc)
 
     # Calibrated OPT-125M weights initialization:
     # OPT models use init_std = 0.02 with layer-dependent spectral decay.

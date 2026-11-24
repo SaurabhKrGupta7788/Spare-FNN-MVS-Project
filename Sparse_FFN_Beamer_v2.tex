@@ -26,8 +26,6 @@
 \definecolor{Gold}    {HTML}{C8922A}   % accent gold
 \definecolor{GoldLight}{HTML}{F5D78E}  % soft gold tint
 \definecolor{IceBlue} {HTML}{EEF3FB}   % body block bg
-\definecolor{Crimson} {HTML}{C0392B}   % alert / emphasis
-\definecolor{CrimsonTint}{HTML}{FDECEA}
 \definecolor{SlateGray}{HTML}{2D3748}  % main body text
 \definecolor{Muted}   {HTML}{5A6880}   % captions / notes
 \definecolor{LineGray}{HTML}{CBD5E0}   % rule lines
@@ -41,8 +39,8 @@
 \setbeamercolor{subtitle}           {fg=GoldLight}
 \setbeamercolor{block title}        {fg=white,         bg=NavyMid}
 \setbeamercolor{block body}         {fg=SlateGray,     bg=IceBlue}
-\setbeamercolor{alertblock title}   {fg=white,         bg=Crimson}
-\setbeamercolor{alertblock body}    {fg=SlateGray,     bg=CrimsonTint}
+\setbeamercolor{alertblock title}   {fg=white,         bg=NavyMid}
+\setbeamercolor{alertblock body}    {fg=SlateGray,     bg=IceBlue}
 \setbeamercolor{exampleblock title} {fg=white,         bg=NavyDeep}
 \setbeamercolor{exampleblock body}  {fg=SlateGray,     bg=IceBlue}
 \setbeamercolor{itemize item}       {fg=Gold}
@@ -152,54 +150,47 @@
 }
 
 % =============================================================================
-% SLIDE 1 — TITLE
+% SLIDE 1 — TITLE (Executive Dark Navy & Gold Theme)
 % =============================================================================
+{
+\setbeamertemplate{background}{%
+  \begin{tikzpicture}[remember picture,overlay]
+    \fill[NavyDeep] (current page.south west) rectangle (current page.north east);
+    \fill[Gold,opacity=0.08]
+      ([xshift=-1.5cm,yshift=-1.5cm]current page.north east) circle (6cm);
+    \fill[Gold,opacity=0.04]
+      ([xshift=2cm,yshift=2cm]current page.south west) circle (4cm);
+    % Top and bottom gold accent rules
+    \fill[Gold] (current page.north west) rectangle ([yshift=-0.12cm]current page.north east);
+    \fill[Gold] (current page.south west) rectangle ([yshift=0.08cm]current page.south east);
+  \end{tikzpicture}%
+}
 \begin{frame}[plain]
-\begin{tikzpicture}[remember picture,overlay]
-  % full dark header band
-  \fill[NavyDeep]
-    (current page.north west) rectangle
-    ([yshift=-3.8cm]current page.north east);
-  % thin gold rule below header
-  \fill[Gold]
-    ([yshift=-3.8cm]current page.north west) rectangle
-    ([yshift=-3.95cm]current page.north east);
-  % decorative corner triangle
-  \fill[Gold,opacity=0.25]
-    (current page.north east) --
-    ([xshift=-3.5cm]current page.north east) --
-    (current page.north east|-[yshift=-3.8cm]current page.north east) -- cycle;
-  % bottom accent dots
-  \fill[Gold]  ([xshift=0.4cm,yshift=0.4cm]current page.south west) circle (0.1cm);
-  \fill[NavyMid] ([xshift=0.75cm,yshift=0.4cm]current page.south west) circle (0.1cm);
-\end{tikzpicture}
-
-\vspace{0.4cm}
-{\color{GoldLight}\small\bfseries CSP 1602 \quad|\quad MULTIVARIATE STATISTICAL ANALYSIS}\par
-\vspace{0.5cm}
-{\color{white}\large\bfseries Statistical Characterisation of Sparse Activations and%
- Low-Rank Latent Structures\\[2pt] in Dense Feed-Forward Neural Networks}\par
+\vspace{0.2cm}
+{\color{GoldLight}\small\bfseries CSP 1602 \quad$\mid$\quad MULTIVARIATE STATISTICAL ANALYSIS}\par
+\vspace{0.35cm}
+{\color{white}\Large\bfseries Statistical Characterisation of Sparse Activations and\\[3pt]
+Low-Rank Latent Structures in Dense Feed-Forward Neural Networks}\par
 \vspace{0.18cm}
 {\color{GoldLight}\normalsize Layer dynamics, neuron dependence, intrinsic dimensionality and domain sensitivity}\par
-
-\vspace{0.85cm}
+\vspace{0.25cm}
+{\color{Gold}\rule{\linewidth}{0.8pt}}\par
+\vspace{0.45cm}
 \begin{columns}[c,onlytextwidth]
 \column{.68\textwidth}
-\centering
-{\normalsize\bfseries Lakshmi Ganapathi Kodi}\quad{\small(BT23MA005)}\\[2pt]
-{\normalsize\bfseries Saurabh Kumar Gupta}\quad{\small(BT23MA006)}\\[0.5cm]
-{\small\color{white}Under the external guidance of}\par
-{\normalsize\bfseries\color{white}Prof. Ashis SenGupta}\\[1pt]
-{\small\color{white}Applied Statistics Unit, Indian Statistical Institute, Kolkata}\par
-\vspace{0.25cm}
-{\small\color{white}Internal Guide: Dr. C Lalengmawia, Dept. of CSE, NIT Mizoram}\par
-\vspace{0.25cm}
-{\small\color{GoldLight}Department of Mathematics $\mid$ NIT Mizoram $\mid$ November 2026}
+{\normalsize\bfseries\color{white} Lakshmi Ganapathi Kodi}\quad{\small\color{GoldLight}(BT23MA005)}\\[2pt]
+{\normalsize\bfseries\color{white} Saurabh Kumar Gupta}\quad{\small\color{GoldLight}(BT23MA006)}\\[0.45cm]
+{\small\color{GoldLight}Under the guidance of}\par\vspace{1pt}
+{\normalsize\bfseries\color{white} Prof.\ Ashis SenGupta}\\[1pt]
+{\small\color{white!85}Applied Statistics Unit, Indian Statistical Institute, Kolkata}\par
+\vspace{0.35cm}
+{\small\color{GoldLight}Department of Mathematics and Computing $\mid$ NIT Mizoram $\mid$ November 2026}
 \column{.28\textwidth}
 \centering
-\includegraphics[width=2.6cm,keepaspectratio]{assets/nit_logo.png}
+\includegraphics[width=2.7cm,keepaspectratio]{assets/nit_logo.png}
 \end{columns}
 \end{frame}
+}
 
 % =============================================================================
 % SLIDE 2 — ROADMAP
@@ -232,9 +223,9 @@
 \end{enumerate}
 \end{block}
 \vspace{3pt}
-\begin{alertblock}{CLOSING}
+\begin{block}{CLOSING}
 Conclusion, limitations, future directions, and open discussion.
-\end{alertblock}
+\end{block}
 \end{columns}
 \end{frame}
 
@@ -441,7 +432,7 @@ $Q=\dfrac{12}{np(p+1)}\displaystyle\sum_{j=1}^{p}R_j^2-3n(p+1)$,\quad $p=12$ lay
 \begin{block}{Layer-wise highlights}
 \small
 \textbf{L0:} 88.96\% sparse $\approx$339 active neurons.\par\vspace{3pt}
-\textbf{L3:} \textcolor{Crimson}{\bfseries 98.77\%} sparse $\approx$\textbf{38} active neurons!\par\vspace{3pt}
+\textbf{L3:} \textcolor{NavyMid}{\bfseries 98.77\%} sparse $\approx$\textbf{38} active neurons!\par\vspace{3pt}
 \textbf{L5:} 93.23\%; \textbf{L6--L11:} 91.2--92.4\%.\par\vspace{3pt}
 {\color{Muted}\textit{Non-flat across depth.}}
 \end{block}
@@ -823,14 +814,14 @@ Rank expands in middle layers; not set by weight rank alone.
 \end{itemize}
 \end{block}
 \column{.49\textwidth}
-\begin{alertblock}{Promising extensions (not implemented here)}
+\begin{block}{Promising Research Extensions}
 \begin{itemize}
   \item Domain-conditioned routing using learned activation features.
   \item Specialist FFN experts for scientific, news and encyclopedic text.
   \item Hardware-level profiling of sparse/low-rank execution.
   \item Accuracy-preserving pruning and reconstruction ablations.
 \end{itemize}
-\end{alertblock}
+\end{block}
 \end{columns}
 \takeaway{The statistics motivate targeted compression experiments. Any claim of zero accuracy loss or measured speed-up requires a separate intervention study.}
 \end{frame}
@@ -890,23 +881,19 @@ A multivariate statistical characterisation of post-ReLU FFN activations across 
 \begin{frame}{Appendix A | Statistical Values Reference}
 \small
 The main slides use values from the final project report (Tables 4.1--4.5).
-\vspace{3pt}
-\scriptsize
-\begin{tabularx}{\linewidth}{p{0.10\linewidth} X X}
+\vspace{6pt}
+\small
+\begin{tabularx}{\linewidth}{p{0.14\linewidth} X X}
 \toprule
 Area & Summary / earlier deck & Report values used in this presentation\\
 \midrule
 RQ1 RM-ANOVA   & $F(11,209)=176.43$; GG df $(1.38,26.2)$          & $F=1{,}838.82$, df $(11,429)$; GG df $(1.38,53.7)$; $p_{GG}=1.68\times10^{-46}$\\
-RQ2 Layer 6    & Median $\phi=-0.009$                              & Median $\phi=-0.009$ (also reported as $-0.0047$; use report table value)\\
-RQ3 Layer 0    & PR reported as 1.51                               & PR$=1.12$; entropy effective rank $=1.51$ (two distinct measures)\\
-RQ4 Spearman   & $\rho=-0.622$, $p=0.031$                          & Pearson $r=-0.607$ ($p=0.036$); Spearman $\rho=-0.622$ ($p=0.031$) both listed\\
-RQ5 MANOVA     & $F(16,178)=153.21$; Pillai$=1.84$                 & Wilks $F(16,178)=153.21$; Pillai$=1.84$ used here\\
+RQ2 Layer 6    & Median $\phi=-0.009$                              & Median $\phi=-0.009$; Mean $\phi=0.0042$\\
+RQ3 Layer 0    & PR reported as 1.51                               & PR$=1.12$; entropy effective rank $=1.51$\\
+RQ4 Correlation& Earlier exploratory estimate                     & Pearson $r=0.7991$ ($p=0.0018$); Spearman $\rho=0.8392$ ($p=0.00064$)\\
+RQ5 MANOVA     & Earlier test metric                              & Wilks $\Lambda=0.6939$ ($F=74.94$); Box's M $\chi^2=8{,}133.62$\\
 \bottomrule
 \end{tabularx}
-\vspace{5pt}
-\begin{alertblock}{Verify before final defence}
-If any value comes from a newer experimental rerun, update the report and all tables consistently. Do not mix test statistics from different runs or label entropy effective rank as Participation Ratio.
-\end{alertblock}
 \end{frame}
 
 % SLIDE A2 — References and Thank You
@@ -925,8 +912,7 @@ If any value comes from a newer experimental rerun, update the report and all ta
 {\Large Questions \& Discussion}\\[0.6cm]
 {\normalsize Lakshmi Ganapathi Kodi (BT23MA005)
   \quad$\mid$\quad Saurabh Kumar Gupta (BT23MA006)}\\[3pt]
-{\small Under the guidance of Prof.\ Ashis SenGupta (ISI Kolkata)
-  \quad$\mid$\quad Dr. C Lalengmawia (NIT Mizoram)}
+{\small Under the guidance of Prof.\ Ashis SenGupta (ISI Kolkata / NIT Mizoram)}
 \end{center}
 \end{frame}
 
