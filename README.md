@@ -1,275 +1,243 @@
-# Sparse FFN MVS Project
+# Statistical Characterisation of Sparse Activations and Low-Rank Latent Structures in Dense Feed-Forward Neural Networks
 
-A research codebase for the project:
+A multivariate statistical investigation of post-ReLU intermediate representations in Transformer Feed-Forward Networks (`facebook/opt-125m`) across layer depth, parameter capacity, and linguistic domains.
 
-**Statistical Characterisation of Sparse Activations and Low-Rank Latent Structures in Dense Feed-Forward Neural Networks**
+---
 
-The repository is deliberately organised as a small research project rather than a single notebook. It uses the Hugging Face ecosystem to obtain WikiText-2, load the model and tokenizer, prepare/cache token blocks, and extract intermediate activations.
+## Academic Project Metadata
 
-## Current implementation status
+| Item | Details |
+| :--- | :--- |
+| **Course** | **CSP 1602: Multivariate Statistical Analysis** |
+| **Academic Guidance** | **Prof. Ashis SenGupta**, Applied Statistics Unit, Indian Statistical Institute (ISI), Kolkata |
+| **Investigators** | **Lakshmi Ganapathi Kodi** (`BT23MA005`) & **Saurabh Kumar Gupta** (`BT23MA006`) |
+| **Department** | **Department of Mathematics and Computing**, National Institute of Technology Mizoram |
+| **Term** | Semester 7, November 2026 |
 
-| Part | Status | What it does |
-|---|---|---|
-| Hugging Face data loading | Implemented | Downloads WikiText-2 with its official train/validation/test splits |
-| Tokenization and preparation | Implemented | Uses the OPT tokenizer and saves token blocks with `datasets.save_to_disk` |
-| Model loading | Implemented | Loads frozen `facebook/opt-125m` using `AutoModelForCausalLM` |
-| FFN activation extraction | Implemented | Captures post-ReLU, pre-`fc2` activations for every OPT FFN layer |
-| Phase 1 descriptive analysis | Implemented | Sparsity, activation-frequency distributions, summary statistics, CSVs and plots |
-| RQ1 profile analysis | Implemented | Block-by-layer sparsity profiles, Hotelling's $T^2$ flatness test, Repeated-Measures ANOVA, and Friedman test |
-| RQ2 neuron dependence | Implemented | Empirical joint, marginal and conditional probabilities, phi correlation and hierarchical clustering |
-| RQ3 latent structure | Implemented | Covariance-based PCA, participation ratio, entropy-based effective rank, reconstruction error, and factor analysis |
-| RQ4 activation/weight rank | Implemented | Weight matrix SVD, singular spectra, effective dimensionality, and Spearman/Pearson rank association |
-| RQ5 cross-domain stability | Implemented | Multi-domain activation analysis, Hotelling's $T^2$, One-Way MANOVA, Box's M test, and Linear Discriminant Analysis |
+---
 
-All five research questions from the Project Proposal are now fully implemented with executable analysis commands, rigorous multivariate statistical tests, and comprehensive unit test coverage.
+## Core Deliverables
 
-## Why OPT-125M?
+- **Final Comprehensive Report (40 pages, PDF):** [`Sparse_FFN_MVS_Project_Report_LaTeX.pdf`](Sparse_FFN_MVS_Project_Report_LaTeX.pdf)
+- **Overleaf Report Package (Ready to upload):** [`Overleaf_Pure_MVS_Report_Package.zip`](Overleaf_Pure_MVS_Report_Package.zip)
+- **Conference Presentation Slides (24 slides, PDF):** [`Sparse_FFN_Beamer_v2.pdf`](Sparse_FFN_Beamer_v2.pdf)
+- **Overleaf Presentation Package (Ready to upload):** [`Sparse_FFN_Beamer_Overleaf.zip`](Sparse_FFN_Beamer_Overleaf.zip)
+- **Machine-Readable JSON Evidence:** [`reports/`](reports/)
 
-The default Hugging Face checkpoint is [`facebook/opt-125m`](https://huggingface.co/facebook/opt-125m). Its Hub configuration specifies 12 Transformer layers, 3,072 FFN intermediate units and a ReLU activation. ReLU gives exact zeros, so the first analysis can measure sparsity without selecting an arbitrary near-zero threshold. The implementation validates these assumptions and stops rather than silently applying the OPT extractor to an incompatible architecture.
+---
 
-The code captures the activation **after ReLU and before the second FFN projection (`fc2`)**. This is the intermediate neuron vector that the project is studying. It does not capture the output of the whole FFN residual block.
+## Executive Summary & Research Questions
 
-## 1. Environment setup
+Modern Transformer architectures assign a majority of their parameter count and compute budget to dense Feed-Forward Network (FFN) sub-layers. In `facebook/opt-125m`, the intermediate layer expands representations from $d = 768$ to $d_{\text{ff}} = 3{,}072$. Because OPT utilizes exact-zero Rectified Linear Unit (ReLU) activations, negative pre-activations are zeroed out, creating an empirical semi-continuous mixture distribution with high zero inflation ($88.96\%\text{--}98.77\%$).
 
-Python 3.10 or newer is recommended. Create a clean environment:
+This study applies classical Multivariate Statistical Analysis (MVS) to intermediate FFN activations across all 12 layers of OPT-125M on the WikiText-2 benchmark and multi-domain corpora:
 
-### Windows PowerShell
-
-```powershell
-py -3.11 -m venv .venv
-.\.venv\Scripts\Activate.ps1
-python -m pip install --upgrade pip
+```
+Token x in R^768  --->  fc1 (3072 x 768)  --->  ReLU  --->  Captured Feature Vector A in R^3072  --->  fc2 (768 x 3072)
 ```
 
-### Linux / macOS
+### Empirical Findings Matrix
+
+| Research Question | Mathematical / Statistical Formulation | Key Empirical Evidence | Scientific Conclusion |
+| :--- | :--- | :--- | :--- |
+| **RQ1: Layer-Wise Sparsity Flatness** | Profile analysis across depth ($n = 40$ blocks, $q = 12$ layers); Hotelling's $T^2$, Repeated-Measures ANOVA, Greenhouse-Geisser ($\hat{\epsilon}$), Friedman test. | $T^2 = 602{,}912.24$ ($p = 1.25 \times 10^{-57}$); Greenhouse-Geisser $F = 1{,}838.82$ ($p = 1.68 \times 10^{-46}$); Friedman $Q = 432.99$ ($p = 5.99 \times 10^{-86}$). | Profile flatness is decisively rejected. The network operates an extreme early bottleneck at Layer 03 ($98.77\%$ zeros) before plateauing at $\approx 92\%$ in middle layers. |
+| **RQ2: Neuron Co-Activation & Modularity** | Pairwise $\phi$-correlation on prevalence-filtered binary indicators ($m = 128$); average-linkage Hierarchical Agglomerative Clustering (HAC). | Layer 00: $76.82\%$ positive pairs (mean $\phi = +0.0685$, max $0.64$, 94 clusters); Layer 06: mean $\phi = 0.0042$, median $\phi = -0.0047$ (122 clusters); Layer 11: mean $\phi = 0.0391$ (94 clusters). | Demonstrates a non-monotonic U-shaped dependence trajectory: strong early co-activation modules, near-orthogonal decorrelation in the interior, and partial re-coupling at readout. |
+| **RQ3: Latent Intrinsic Dimensionality** | Covariance-based PCA (unstandardised); Participation Ratio ($\text{PR}$); Roy-Vetterli Entropy Effective Rank ($\text{erank}$); split-half subspace stability. | Layer 00: $\text{erank} = 1.51$ ($\text{PR} = 1.12$, PC1 explains $81.4\%$ variance); Layer 06: $\text{erank} = 45.53$ ($\text{PR} = 29.86$); Subspace angle stability $\bar{\rho}_{10} \ge 0.878$. | Activations undergo severe low-rank collapse at early layers and expand into broad 45-dimensional manifolds in middle layers, never utilizing the nominal 3,072 dimensions. |
+| **RQ4: Static Weights vs. Dynamic Activations** | SVD of actual OPT-125M parameter matrices $\mathbf{W}_{\text{fc1}}$ ($3072 \times 768$) and $\mathbf{W}_{\text{fc2}}$ ($768 \times 3072$); Pearson $r$ and Spearman $\rho$. | Pearson $r = +0.7991$ ($p = 0.0018$); Spearman $\rho = +0.8392$ ($p = 0.00064$); Mean weight $\text{erank}_W = 500.53$ vs. Activation $\text{erank}_A = 26.38$. | Weight capacity and empirical activation rank are monotonically coupled across depth, but weights operate with an order of magnitude higher effective rank. |
+| **RQ5: Cross-Domain Representation Invariance** | One-Way MANOVA ($G = 3$, $K = 8$ PCA subspace, $N = 3{,}000$ tokens); Box's M test; 5-Fold Linear & Quadratic Discriminant Analysis. | Wilks' $\Lambda = 0.6939$ (Rao $F = 74.94, p = 7.86 \times 10^{-223}$); Box's M $\chi^2(72) = 8{,}133.62$ ($p < 10^{-300}$); LDA accuracy $55.83\% \pm 0.96\%$; QDA $51.57\% \pm 2.70\%$. | Activations are domain-sensitive. Rejecting equal centroids and covariances confirms that FFN representations systematically adapt their geometric manifolds to input text genres. |
+
+---
+
+## Repository Structure
+
+```text
+Spare-FNN-MVS-Project/
+├── assets/                                 # Presentation and report figures (PNG)
+│   ├── nit_logo.png                        # National Institute of Technology Mizoram emblem
+│   ├── rq1_layer_sparsity.png              # RQ1 sparsity profile across depth
+│   ├── rq2_coactivation.png                # RQ2 pairwise correlation heatmap
+│   ├── rq2_dendrogram.png                  # RQ2 hierarchical clustering tree
+│   ├── rq3_pca.png                         # RQ3 PCA scree plot
+│   ├── rq4_weight_activation.png           # RQ4 weight vs activation singular spectra
+│   └── rq5_lda.png                         # RQ5 canonical discriminant projection
+├── configs/
+│   └── default.yaml                        # Configuration for model, data, and extraction
+├── docs/
+│   ├── DATA_AND_ACTIVATION_FORMAT.md       # Specification of tokenization and NPZ tensors
+│   └── RESEARCH_PLAN.md                    # Detailed research methodology and hypotheses
+├── report_latex/                           # Complete LaTeX source of the 40-page report
+│   ├── figures/                            # High-resolution vector/raster figures
+│   ├── main.tex                            # Primary document (clean, 0 overfull hboxes)
+│   ├── references.bib                      # Formal bibliographic database
+│   └── main.pdf                            # Compiled PDF output
+├── reports/                                # Numerical evidence in structured JSON format
+│   ├── descriptive_report.json             # Phase 1 summary statistics
+│   ├── profile_analysis_report.json        # RQ1 Hotelling's T^2 and ANOVA outputs
+│   ├── rq2_neuron_dependence_report.json   # RQ2 phi correlation and HAC metrics
+│   ├── rq3_latent_structure_report.json    # RQ3 PCA, PR, and effective rank
+│   ├── rq4_weight_rank_report.json         # RQ4 weight SVD and correlation metrics
+│   ├── rq5_domain_stability_report.json    # RQ5 MANOVA, Box's M, and LDA results
+│   └── README.md                           # Documentation for JSON report schemas
+├── scripts/
+│   ├── check_environment.py                # Environment and dependency verification
+│   └── run_real_rq4_rq5.py                 # Standalone script for real RQ4 and RQ5 execution
+├── src/sparse_ffn/                         # Core Python package
+│   ├── analysis/                           # Statistical modules (RQ1 to RQ5)
+│   │   ├── _activation_io.py               # Memory-mapped NPZ activation reader
+│   │   ├── descriptive.py                  # Phase 1 descriptive metrics
+│   │   ├── rq1_layer_comparison.py         # Profile analysis & Greenhouse-Geisser
+│   │   ├── rq2_neuron_dependence.py        # Phi-correlation & dendrograms
+│   │   ├── rq3_latent_structure.py         # Covariance PCA & participation ratio
+│   │   ├── rq4_weight_rank.py              # Weight SVD & correlation analysis
+│   │   └── rq5_domain_stability.py         # MANOVA, Box's M, & LDA
+│   ├── data/                               # Dataset preparation & block batching
+│   │   ├── collator.py                     # Non-padding attention mask collator
+│   │   ├── token_blocks.py                 # Fixed-size token block chunking
+│   │   └── wikitext.py                     # Hugging Face WikiText-2 loader
+│   ├── modeling/                           # Model integration
+│   │   └── opt_adapter.py                  # PyTorch forward hook for post-ReLU capture
+│   ├── cli.py                              # Unified command-line interface
+│   ├── config.py                           # Pydantic / dataclass configuration
+│   └── extraction.py                       # Batch extraction pipeline
+├── tests/                                  # Comprehensive automated test suite (19 tests)
+│   ├── test_collator.py
+│   ├── test_descriptive.py
+│   ├── test_rq1_layer_comparison.py
+│   ├── test_rq2_neuron_dependence.py
+│   ├── test_rq3_latent_structure.py
+│   ├── test_rq4_weight_rank.py
+│   ├── test_rq5_domain_stability.py
+│   └── test_token_blocks.py
+├── Overleaf_Pure_MVS_Report_Package.zip    # Standalone Overleaf ZIP for report
+├── Sparse_FFN_Beamer_Overleaf.zip          # Standalone Overleaf ZIP for slides
+├── Sparse_FFN_Beamer_v2.pdf                # Compiled Beamer presentation PDF
+├── Sparse_FFN_Beamer_v2.tex                # Presentation LaTeX source
+├── Sparse_FFN_MVS_Project_Report_LaTeX.pdf # Compiled report PDF
+├── pyproject.toml                          # Package definition and tool configs
+├── requirements.txt                        # Python dependencies
+└── README.md                               # This document
+```
+
+---
+
+## Installation & Setup
+
+### 1. Create Virtual Environment
 
 ```bash
-python3 -m venv .venv
+# Clone the repository
+git clone https://github.com/SaurabhKrGupta7788/Spare-FNN-MVS-Project.git
+cd Spare-FNN-MVS-Project
+
+# Create and activate environment
+python -m venv .venv
+
+# On Linux / macOS:
 source .venv/bin/activate
-python -m pip install --upgrade pip
+
+# On Windows PowerShell:
+.\.venv\Scripts\Activate.ps1
 ```
 
-Install PyTorch first using the selector for your machine (CPU or the appropriate CUDA build):
-
-<https://pytorch.org/get-started/locally/>
-
-Then install this project:
+### 2. Install Dependencies
 
 ```bash
+# Install PyTorch appropriate for your machine:
+# Refer to https://pytorch.org/get-started/locally/
+
+# Install sparse_ffn package in editable mode with development tools:
 pip install -e ".[dev]"
 ```
 
-The project uses these Hugging Face packages:
-
-- `datasets`: load WikiText-2 and save prepared token blocks.
-- `transformers`: load the OPT tokenizer and causal language model.
-- `huggingface-hub`: Hub download/cache and optional authentication support.
-- `scikit-learn`: PCA and exploratory Gaussian factor analysis for RQ3.
-
-WikiText-2 and OPT-125M are public. A Hugging Face token is not normally needed. If you use a gated/private resource later, set `HF_TOKEN` as an environment variable; do not place tokens in YAML or commit them.
-
-## 2. Run the complete Phase 1 pipeline
-
-From the repository root:
+Verify your installation:
 
 ```bash
-python -m sparse_ffn --config configs/default.yaml run-all
+python scripts/check_environment.py
 ```
 
-This executes three stages:
+---
 
-1. Download and prepare the official WikiText-2 train/validation/test splits.
-2. Extract a small pilot of train-split activations.
-3. Generate Phase 1 descriptive tables and plots.
+## Executing the Analysis Pipeline
 
-The default is intentionally a pilot (`max_batches: 20`, `batch_size: 2`, `block_size: 128`) to check that the complete pipeline works before creating a large activation archive.
+### Step 1: Prepare Token Datasets
 
-## 3. Run each stage independently
-
-### Stage A — prepare data
+Downloads and processes the official WikiText-2 splits:
 
 ```bash
 python -m sparse_ffn prepare-data
 ```
 
-This uses `load_dataset("Salesforce/wikitext", "wikitext-2-raw-v1")`, then the matching OPT tokenizer. WikiText-2's existing train, validation and test splits are preserved; the project does not randomly re-split them. Each non-empty source text row is tokenized and terminated by the tokenizer's EOS token before blocks are formed. The final short block is retained and padded only when batching, with padding positions excluded from activation statistics.
+### Step 2: Extract Post-ReLU Activations
 
-Prepared splits are saved with Hugging Face `Dataset.save_to_disk` under:
-
-```text
-data/processed/wikitext2/
-  train/
-  validation/
-  test/
-```
-
-To rebuild them:
+Captures intermediate neuron activations from frozen `facebook/opt-125m`:
 
 ```bash
-python -m sparse_ffn prepare-data --overwrite
-```
+# Pilot run (20 batches of 128 tokens)
+python -m sparse_ffn extract-activations --split train --max-batches 20
 
-### Stage B — extract activations
-
-```bash
-python -m sparse_ffn extract-activations --split train
-```
-
-Options:
-
-```bash
-# Process 100 batches instead of the 20-batch pilot
-python -m sparse_ffn extract-activations --split train --max-batches 100
-
-# Process the entire prepared split (can consume substantial disk space)
+# Full split extraction
 python -m sparse_ffn extract-activations --split train --max-batches 0
-
-# Change batch size or force CPU
-python -m sparse_ffn extract-activations --split train --batch-size 1 --device cpu
 ```
 
-Each extraction creates a unique run folder:
+### Step 3: Run Research Question Analyses
 
-```text
-artifacts/activations/train/<timestamp>_facebook--opt-125m/
-  manifest.json
-  layer_00/batch_000000.npz
-  layer_01/batch_000000.npz
-  ...
-  layer_11/...
-```
-
-Each NPZ shard contains an `activations` matrix with shape `[valid_tokens, 3072]`, plus aligned `block_ids` and `token_positions` arrays. The IDs make later chunk-level inference possible. It stores float16 by default to reduce disk use; set `storage_dtype: float32` in the YAML or pass `--storage-dtype float32` for higher-precision descriptive values. Zeros are preserved exactly in float16.
-
-**Storage note:** all 12 FFN layers are saved. Before compression, the activation archive is approximately `number_of_tokens × 12 × 3,072 × 2 bytes` with float16 storage. For example, 100,000 tokens would be about 7.4 GB before compression. A full WikiText-2 extraction can therefore require tens of gigabytes or more. Start with the default pilot, inspect the outputs, and increase `max_batches` gradually. Use `--max-batches 0` only when sufficient disk space is available.
-
-### Stage C — Phase 1 descriptive analysis
+Each module can be executed independently:
 
 ```bash
-python -m sparse_ffn analyze-descriptive --split train
-```
-
-By default, this selects the latest completed extraction run. To analyse a particular run, pass its folder:
-
-```bash
-python -m sparse_ffn analyze-descriptive --split train --run-dir "artifacts/activations/train/<run-folder>"
-```
-
-Outputs are written to:
-
-```text
-artifacts/analysis/train/<run-folder>/descriptive/
-  layer_summary.csv
-  block_sparsity_by_layer.csv
-  neuron_activation_frequency.csv
-  descriptive_report.json
-  plots/
-    layer_sparsity.png
-    layer_00/
-      token_sparsity_distribution.png
-      neuron_activation_frequency.png
-      positive_activation_distribution.png
-    ...
-```
-
-## 4. What Phase 1 measures
-
-For an activation matrix `H` with `n` token rows and `d` neurons:
-
-- **Zero fraction:** proportion of all neuron-token activations equal to zero.
-- **Token-wise sparsity:** for each token, the proportion of its `d` neurons that are zero.
-- **Neuron activation frequency:** for each neuron, the proportion of tokens on which it is positive.
-- **Activation magnitude:** mean and standard deviation over all activations and over positive activations.
-- **Positive-value distribution:** sample-based quantiles, skewness and excess kurtosis.
-
-The main output, `layer_summary.csv`, gives one row per FFN layer. The plots show how sparsity changes across depth and how token-wise sparsity and neuron activity frequencies are distributed within each layer.
-
-The positive activation quantiles and shape statistics are estimated from a bounded random sample to avoid loading a full multi-gigabyte activation matrix into memory. The CSV marks this with `positive_quantiles_are_sampled=True` and reports the sample size.
-
-### Important interpretation limits
-
-Phase 1 is descriptive only. RQ1 adds a block-level profile-flatness test; RQ2 describes pairwise dependence on a selected neuron subset; RQ3 investigates covariance-based dimension reduction and exploratory factor models.
-
-Tokens from the same document are not independent observations. RQ1 therefore uses the text block as its repeated-measure unit. RQ2 and RQ3 are descriptive/model-exploratory analyses and do not treat token rows as independent replicates for formal significance testing.
-
-## 5. Extending the project for RQ1–RQ5
-
-The future modules are under `src/sparse_ffn/analysis/`:
-
-```text
-rq1_layer_comparison.py
-rq2_neuron_dependence.py
-rq3_latent_structure.py
-rq4_weight_rank.py
-rq5_domain_stability.py
-```
-
-### Available Analysis Commands:
-
-```bash
-# Phase 1: Descriptive analysis
+# Phase 1: Summary statistics & zero fractions
 python -m sparse_ffn analyze-descriptive --split train
 
-# RQ1: Profile flatness, Repeated-Measures ANOVA, and Friedman test
+# RQ1: Sparsity profile flatness tests
 python -m sparse_ffn analyze-rq1 --split train
 
-# RQ2: Neuron marginal, joint, conditional probabilities, phi correlation, clustering
+# RQ2: Neuron co-activation & hierarchical clustering
 python -m sparse_ffn analyze-rq2 --split train
 
-# RQ3: Covariance PCA, participation ratio, entropy-based effective rank, factor analysis
+# RQ3: Covariance PCA, effective rank, and stability
 python -m sparse_ffn analyze-rq3 --split train
 
-# RQ4: Activation vs weight matrix SVD, singular spectra, and rank correlation
-python -m sparse_ffn analyze-rq4 --split train
+# RQ4 & RQ5: Real OPT-125M weight SVD & multi-domain corpora
+python scripts/run_real_rq4_rq5.py
+```
 
-# RQ5: Cross-domain stability: Hotelling's T^2, One-Way MANOVA, Box's M, LDA
-python -m sparse_ffn analyze-rq5 --split train
+To execute all pipeline stages sequentially:
 
-# Run all analyses sequentially (RQ1 through RQ5)
+```bash
 python -m sparse_ffn analyze-all --split train
 ```
 
+---
 
-## 6. Repository structure
+## Testing & Verification
 
-```text
-sparse_ffn_mvs_project/
-├── configs/
-│   └── default.yaml
-├── docs/
-│   ├── DATA_AND_ACTIVATION_FORMAT.md
-│   └── RESEARCH_PLAN.md
-├── src/sparse_ffn/
-│   ├── analysis/
-│   │   ├── descriptive.py
-│   │   ├── _activation_io.py
-│   │   ├── rq1_layer_comparison.py
-│   │   ├── rq2_neuron_dependence.py
-│   │   ├── rq3_latent_structure.py
-│   │   ├── rq4_weight_rank.py
-│   │   └── rq5_domain_stability.py
-│   ├── data/
-│   ├── modeling/
-│   ├── cli.py
-│   ├── config.py
-│   └── extraction.py
-├── tests/
-├── pyproject.toml
-└── README.md
-```
-
-## 7. Tests
-
-Run the lightweight unit tests (they do not download a model or dataset):
+The repository includes a comprehensive 19-test automated test suite verifying collator masks, mathematical estimators, and test statistics:
 
 ```bash
-pytest -q
+pytest -v
 ```
 
-## References
+All 19 tests run in under 75 seconds without requiring live model or dataset downloads.
 
-- [WikiText-2 on the Hugging Face Hub](https://huggingface.co/datasets/Salesforce/wikitext) (dataset repository/configuration; the code uses `wikitext`, `wikitext-2-raw-v1`).
-- [OPT-125M model card and configuration](https://huggingface.co/facebook/opt-125m).
-- [Hugging Face Datasets loading documentation](https://huggingface.co/docs/datasets/loading).
-- [Hugging Face Transformers model loading documentation](https://huggingface.co/docs/transformers/models).
-- [PyTorch installation selector](https://pytorch.org/get-started/locally/).
+---
+
+## Compiling LaTeX Documents
+
+The report and presentation are pre-compiled in the repository root. To rebuild them locally:
+
+```bash
+# Compile Project Report (40 pages)
+cd report_latex
+pdflatex -interaction=nonstopmode main.tex
+pdflatex -interaction=nonstopmode main.tex
+
+# Compile Presentation Slides (24 slides)
+cd ..
+pdflatex -interaction=nonstopmode Sparse_FFN_Beamer_v2.tex
+pdflatex -interaction=nonstopmode Sparse_FFN_Beamer_v2.tex
+```
+
+---
+
+## License
+
+This project is licensed under the MIT License — see the [`LICENSE`](LICENSE) file for details.
