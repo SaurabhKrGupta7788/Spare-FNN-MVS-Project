@@ -22,9 +22,9 @@ Your task is to completely rewrite and polish `main.tex` from start to finish. T
 ### Critical Requirements & Corrections
 
 #### 1. Title Page & Administrative Metadata
-- Course Title: Change strictly to `CSP 1602: Multivariate Statistical Analysis` (remove `/ Software Engineering Lab`).
-- Guidance Details: Under the guidance of `Dr. C Lalengmawia`, Assistant Professor, Department of CSE, National Institute of Technology Mizoram.
-- Authors: `Lakshmi Ganapathi Kodi` (BT23MA005) & `Saurabh Kumar Guptha` (BT23MA006), Semester 7, November 2026.
+- Course Title: `Multivariate Statistical Analysis` (MVS).
+- Guidance Details: Under the guidance of `Prof. Ashis SenGupta`, Department of Mathematics and Computing, National Institute of Technology Mizoram.
+- Authors: `Lakshmi Ganapathi Kodi` (BT23MA005) & `Saurabh Kumar Gupta` (BT23MA006), Semester 7, November 2026.
 - Institutional Emblem: Properly embed `\includegraphics[width=2.5cm]{nit_logo.png}` inside a clean centered block on the title page (fix the empty figure environment).
 
 #### 2. Pure-MVS Syllabus Alignment & Mathematical Rigor
