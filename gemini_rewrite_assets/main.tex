@@ -304,7 +304,7 @@ In our single-corpus profile design ($G = 1$, WikiText-2 blocks in RQ1), paralle
     \label{eq:rq1_flatness_hyp}
 \end{equation}
 
-\subsection{Hotelling's \texorpdfstring{$T^2$}{T2}, Sphericity Adjustments, and Non-Parametric Checks}
+\subsection{Hotelling's \texorpdfstring{$T^2$}{T2}, Sphericity, and Non-Parametric Checks}
 
 Employing a baseline contrast matrix $\mat{C} \in \R^{(q-1) \times q}$ comparing each layer $\ell \ge 1$ against Layer~00,
 \begin{equation}
@@ -579,10 +579,11 @@ Table~\ref{tab:phase1_descriptive} reports the marginal sample statistics of all
 
 \begin{table}[htbp]
     \centering
-    \caption{Layer-wise descriptive statistics of post-ReLU activations in \texttt{facebook/opt-125m} ($M = 5{,}120$ tokens, $p = 3{,}072$ coordinates per layer). Positive-tail skewness and excess kurtosis are computed on $100{,}000$ sampled positive entries per layer.}
+    \caption[Layer-wise descriptive statistics of post-ReLU activations in OPT-125M]{Layer-wise descriptive statistics of post-ReLU activations in \texttt{facebook/opt-125m} ($M = 5{,}120$ tokens, $p = 3{,}072$ coordinates per layer). Positive-tail skewness and excess kurtosis are computed on $100{,}000$ sampled positive entries per layer.}
     \label{tab:phase1_descriptive}
     \small
     \setlength{\tabcolsep}{4.5pt}
+    \noindent\resizebox{\textwidth}{!}{%
     \begin{tabular}{@{}l r r r r r r r@{}}
         \toprule
         \textbf{Layer} & \textbf{Zero Frac.} & \textbf{Mean Active} & \textbf{Sparsity SD} & \textbf{Pos.\ Mean} & \textbf{Pos.\ SD} & \textbf{Pos.\ Skew} & \textbf{Ex.\ Kurt.} \\
@@ -600,13 +601,14 @@ Table~\ref{tab:phase1_descriptive} reports the marginal sample statistics of all
         Layer 10 & 0.9116 & 271.7 & 0.0181 & 0.2087 & 0.1963 &  2.02 &    7.44 \\
         Layer 11 & 0.9149 & 261.4 & 0.0347 & 0.2517 & 0.3145 &  5.70 &   55.60 \\
         \bottomrule
-    \end{tabular}
+    \end{tabular}%
+    }
 \end{table}
 
 \begin{figure}[htbp]
     \centering
     \includegraphics[width=0.88\textwidth]{figures/fig_layer_sparsity_bars.png}
-    \caption{Mean token-wise exact-zero percentage across all 12 FFN layers of \texttt{facebook/opt-125m} on the WikiText-2 benchmark.}
+    \caption[Mean token-wise exact-zero percentage across all 12 FFN layers of OPT-125M]{Mean token-wise exact-zero percentage across all 12 FFN layers of \texttt{facebook/opt-125m} on the WikiText-2 benchmark.}
     \label{fig:layer_sparsity_bars}
 \end{figure}
 
@@ -632,7 +634,9 @@ Figure~\ref{fig:rq1_profile} displays the block-averaged sparsity profile across
     \caption{Multivariate and non-parametric hypothesis tests for layer-wise sparsity profile flatness (RQ1, $n = 40$ blocks, $q = 12$ layers).}
     \label{tab:rq1_tests}
     \small
-    \begin{tabularx}{\textwidth}{@{}l l l l X@{}}
+    \setlength{\tabcolsep}{6pt}
+    \noindent\resizebox{\textwidth}{!}{%
+    \begin{tabular}{@{}l c c c c@{}}
         \toprule
         \textbf{Test Procedure} & \textbf{Statistic} & \textbf{Degrees of Freedom} & \textbf{$p$-value} & \textbf{Decision} \\
         \midrule
@@ -641,7 +645,8 @@ Figure~\ref{fig:rq1_profile} displays the block-averaged sparsity profile across
         Greenhouse--Geisser ($\hat{\epsilon}=0.1253$) & $F = 1{,}838.82$ & $\mathrm{df}_1^* = 1.38,\; \mathrm{df}_2^* = 53.74$ & $1.68 \times 10^{-46}$ & Reject $H_0$ \\
         Friedman Rank Test & $Q = 432.99$ & $\mathrm{df} = 11$ & $5.99 \times 10^{-86}$ & Reject $H_0$ \\
         \bottomrule
-    \end{tabularx}
+    \end{tabular}%
+    }
 \end{table}
 
 The ANOVA sum-of-squares breakdown highlights that variance across layers ($SS_{\text{layers}} = 0.45200$) dwarfs block-to-block differences ($SS_{\text{blocks}} = 0.00062$) and residual error ($SS_{\text{error}} = 0.00959$). Because Layer~00 exhibits far greater dispersion than Layers~01--04, the assumption of compound symmetry is completely violated. The Greenhouse--Geisser sphericity index drops to $\hat{\epsilon} = 0.1253$, approaching the theoretical minimum of $1/11 \approx 0.0909$. Even when we heavily adjust the degrees of freedom downwards, the corrected $F$-statistic rejects profile flatness with an overwhelming significance level of $p = 1.68 \times 10^{-46}$. Hotelling's $T^2$ and Friedman's non-parametric rank test confirm this conclusion without relying on sphericity or Gaussian assumptions.
@@ -655,7 +660,8 @@ Applying the prevalence filter~\eqref{eq:prevalence_filter} ($0.01 \le \hat{\pi}
     \caption{Binary co-activation dependence metrics across all 12 layers (RQ2, $M = 5{,}120$ tokens, $m = 128$ sampled coordinates from $\mathcal{K}_{\text{elig}}^{(\ell)}$, average-linkage cluster cutoff $d = 1 - \phi = 0.70$).}
     \label{tab:rq2_all_layers}
     \small
-    \setlength{\tabcolsep}{8pt}
+    \setlength{\tabcolsep}{6pt}
+    \noindent\resizebox{\textwidth}{!}{%
     \begin{tabular}{@{}l c r r c c@{}}
         \toprule
         \textbf{Layer} & \textbf{Eligible Units} & \textbf{Mean $\phi$} & \textbf{Median $\phi$} & \textbf{Positive Pairs (\%)} & \textbf{Clusters ($d = 0.70$)} \\
@@ -673,7 +679,8 @@ Applying the prevalence filter~\eqref{eq:prevalence_filter} ($0.01 \le \hat{\pi}
         Layer 10 & 2690 & 0.0071 & $-0.0073$ & 43.63 & 111 \\
         Layer 11 & 2732 & 0.0391 &  0.0115 & 57.28 &  94 \\
         \bottomrule
-    \end{tabular}
+    \end{tabular}%
+    }
 \end{table}
 
 \begin{figure}[htbp]
@@ -712,7 +719,8 @@ Table~\ref{tab:rq3_dimensionality} summarizes the covariance PCA effective dimen
     \caption{Layer-wise covariance PCA effective dimensionality, reconstruction error, and split-half principal-angle stability (RQ3, $N = 5{,}000$ tokens per layer).}
     \label{tab:rq3_dimensionality}
     \small
-    \setlength{\tabcolsep}{8pt}
+    \setlength{\tabcolsep}{6pt}
+    \noindent\resizebox{\textwidth}{!}{%
     \begin{tabular}{@{}l r r c r r@{}}
         \toprule
         \textbf{Layer} & \textbf{PR} & \textbf{Entropy $\erank$} & \textbf{$K$ for 80\% Var.} & \textbf{Recon.\ Error ($K=10$)} & \textbf{Split-Half $\bar{\rho}_{10}$} \\
@@ -730,7 +738,8 @@ Table~\ref{tab:rq3_dimensionality} summarizes the covariance PCA effective dimen
         Layer 10 & 27.64 & 41.43 & $>64$  & 0.7212 & 0.913 \\
         Layer 11 &  3.38 & 10.81 & $>64$  & 0.3978 & 0.941 \\
         \bottomrule
-    \end{tabular}
+    \end{tabular}%
+    }
 \end{table}
 
 \begin{figure}[htbp]
@@ -770,7 +779,7 @@ Singular value decomposition of the actual parameter matrices (\texttt{fc1} and 
 
 \begin{table}[htbp]
     \centering
-    \caption{Cross-layer association between empirical activation effective dimensionality and actual \texttt{facebook/opt-125m} weight matrix spectral dimensionality (RQ4, $n = 12$ layers).}
+    \caption[Cross-layer association between empirical activation and OPT-125M weight spectral rank]{Cross-layer association between empirical activation effective dimensionality and actual \texttt{facebook/opt-125m} weight matrix spectral dimensionality (RQ4, $n = 12$ layers).}
     \label{tab:rq4_corr}
     \footnotesize
     \begin{tabularx}{\textwidth}{@{}l r r X@{}}
@@ -788,7 +797,7 @@ Singular value decomposition of the actual parameter matrices (\texttt{fc1} and 
 \begin{figure}[htbp]
     \centering
     \includegraphics[width=0.95\textwidth]{figures/fig4_activation_vs_weight_rank.png}
-    \caption{Comparison of empirical activation effective rank and real \texttt{facebook/opt-125m} FFN weight matrix SVD spectra across depth: (left) top 128 singular values of \texttt{fc1} and \texttt{fc2} on logarithmic scale, (centre) depth-wise effective rank trajectories, and (right) scatter plot of activation rank versus weight rank ($r = 0.80$, $\rho = 0.84$).}
+    \caption[Comparison of empirical activation rank and real OPT-125M weight SVD spectra]{Comparison of empirical activation effective rank and real \texttt{facebook/opt-125m} FFN weight matrix SVD spectra across depth: (left) top 128 singular values of \texttt{fc1} and \texttt{fc2} on logarithmic scale, (centre) depth-wise effective rank trajectories, and (right) scatter plot of activation rank versus weight rank ($r = 0.80$, $\rho = 0.84$).}
     \label{fig:rq4_weights}
 \end{figure}
 
@@ -805,25 +814,32 @@ To test representation invariance across linguistic populations, $N = 3{,}000$ g
     \caption{Multivariate hypothesis tests and 5-fold cross-validated classification performance across three genuine text corpora in Layer~00 (RQ5, $N = 3{,}000$, $G = 3$, $K = 8$ principal components).}
     \label{tab:rq5_tests}
     \small
-    \setlength{\tabcolsep}{6pt}
+    \setlength{\tabcolsep}{5pt}
+    \noindent\resizebox{\textwidth}{!}{%
     \begin{tabular}{@{}l r l r l@{}}
         \toprule
         \textbf{Test / Classifier} & \textbf{Value} & \textbf{Test Statistic / Details} & \textbf{$p$-value} & \textbf{Inference} \\
         \midrule
-        MANOVA: Wilks' $\Lambda$ & $0.6939$ & Rao $F(16, 5980) = 74.94$ & $7.86 \times 10^{-223}$ & Reject equal centroids \\
-        MANOVA: Pillai's Trace & $0.3208$ & $s = 2$ non-zero roots & $< 10^{-200}$ & Reject equal centroids \\
-        MANOVA: Hotelling--Lawley & $0.4201$ & $\sum \xi_r = 0.4201$ & $< 10^{-200}$ & Reject equal centroids \\
-        MANOVA: Roy's Root & $\xi_1 = 0.3619$ & $\theta = 0.2657$ ($s=2, \tilde{n}=1494$) & $< 10^{-200}$ & Reject equal centroids \\
+        \multicolumn{5}{@{}l}{\textit{Multivariate Analysis of Variance (MANOVA):}} \\
+        Wilks' $\Lambda$ & $0.6939$ & Rao $F(16, 5980) = 74.94$ & $7.86 \times 10^{-223}$ & Reject equal centroids \\
+        Pillai's Trace & $0.3208$ & $s = 2$ non-zero roots & $< 10^{-200}$ & Reject equal centroids \\
+        Hotelling--Lawley & $0.4201$ & $\sum \xi_r = 0.4201$ & $< 10^{-200}$ & Reject equal centroids \\
+        Roy's Largest Root & $\xi_1 = 0.3619$ & $\theta = 0.2657$ ($s=2, \tilde{n}=1494$) & $< 10^{-200}$ & Reject equal centroids \\
+        \midrule
+        \multicolumn{5}{@{}l}{\textit{Equality of Covariance Matrices:}} \\
         Box's $M$ Test & $8{,}164.09$ & $\chi^2(72) = 8{,}133.62$ & $< 10^{-300}$ & Reject equal covariances \\
         \midrule
-        $T^2$: Wiki vs.\ Sci & $801.16$ & $F(8, 1991) = 99.79$ & $6.58 \times 10^{-140}$ & Reject $\boldsymbol{\mu}_W = \boldsymbol{\mu}_S$ \\
-        $T^2$: Wiki vs.\ News & $624.99$ & $F(8, 1991) = 77.85$ & $4.84 \times 10^{-112}$ & Reject $\boldsymbol{\mu}_W = \boldsymbol{\mu}_N$ \\
-        $T^2$: Sci vs.\ News & $283.17$ & $F(8, 1991) = 35.27$ & $1.61 \times 10^{-52}$ & Reject $\boldsymbol{\mu}_S = \boldsymbol{\mu}_N$ \\
+        \multicolumn{5}{@{}l}{\textit{Pairwise Hotelling's Two-Sample $T^2$ Tests:}} \\
+        Wiki vs.\ Scientific & $801.16$ & $F(8, 1991) = 99.79$ & $6.58 \times 10^{-140}$ & Reject $\boldsymbol{\mu}_W = \boldsymbol{\mu}_S$ \\
+        Wiki vs.\ News & $624.99$ & $F(8, 1991) = 77.85$ & $4.84 \times 10^{-112}$ & Reject $\boldsymbol{\mu}_W = \boldsymbol{\mu}_N$ \\
+        Scientific vs.\ News & $283.17$ & $F(8, 1991) = 35.27$ & $1.61 \times 10^{-52}$ & Reject $\boldsymbol{\mu}_S = \boldsymbol{\mu}_N$ \\
         \midrule
-        LDA (5-Fold CV) & $55.83\%$ & $\text{SD} = 0.96\%$ (chance $33.3\%$) & --- & Linear separation \\
-        QDA (5-Fold CV) & $51.57\%$ & $\text{SD} = 2.70\%$ (chance $33.3\%$) & --- & Quadratic separation \\
+        \multicolumn{5}{@{}l}{\textit{Supervised Cross-Validated Classification (Chance $= 33.33\%$):}} \\
+        LDA (5-Fold CV) & $55.83\%$ & $\text{SD} = 0.96\%$ & --- & Linear separation \\
+        QDA (5-Fold CV) & $51.57\%$ & $\text{SD} = 2.70\%$ & --- & Quadratic separation \\
         \bottomrule
-    \end{tabular}
+    \end{tabular}%
+    }
 \end{table}
 
 \begin{figure}[htbp]
@@ -854,7 +870,7 @@ Unlike synthetic benchmarks that feature artificial cluster gaps, genuine single
 
 \section{Summary of Findings}
 
-Applying classical multivariate analysis to the intermediate activations of \texttt{facebook/opt-125m} yields five primary findings:
+Applying classical multivariate analysis to the intermediate activations of OPT-125M (\texttt{opt-125m}) yields five primary findings:
 
 First, block-level profile analysis over $n = 40$ passages rejects uniform sparsity across depth. Profile flatness is decisively rejected by Hotelling's $T^2$ ($p = 1.25 \times 10^{-57}$), repeated-measures ANOVA under Greenhouse--Geisser sphericity adjustment ($\hat{\epsilon} = 0.1253$, $p = 1.68 \times 10^{-46}$), and Friedman's test ($p = 5.99 \times 10^{-86}$). The network acts as an early bottleneck, with exact zeros rising from $88.96\%$ in Layer~00 to $98.77\%$ in Layer~03 before leveling off between $91.2\%$ and $92.4\%$ in intermediate layers.
 
@@ -920,10 +936,11 @@ Table~\ref{tab:app_rq4_layer_data} presents the complete layer-wise empirical ac
 
 \begin{table}[htbp]
     \centering
-    \caption{Layer-by-layer comparison of empirical activation effective dimensionality and actual \texttt{facebook/opt-125m} FFN weight matrix spectral dimensionality (RQ4). All parameter matrices possess full algebraic rank $768$.}
+    \caption[Layer-by-layer comparison of empirical activation and OPT-125M weight spectral rank]{Layer-by-layer comparison of empirical activation effective dimensionality and actual \texttt{facebook/opt-125m} FFN weight matrix spectral dimensionality (RQ4). All parameter matrices possess full algebraic rank $768$.}
     \label{tab:app_rq4_layer_data}
     \small
-    \setlength{\tabcolsep}{5pt}
+    \setlength{\tabcolsep}{4.5pt}
+    \noindent\resizebox{\textwidth}{!}{%
     \begin{tabular}{@{}l r r r r r r r@{}}
         \toprule
         \textbf{Layer} & \textbf{Act.\ $\erank$} & \textbf{Act.\ $\PR$} & \textbf{\texttt{fc1} $\erank$} & \textbf{\texttt{fc1} $\PR$} & \textbf{\texttt{fc2} $\erank$} & \textbf{\texttt{fc2} $\PR$} & \textbf{Mean Wt.\ $\erank$} \\
@@ -943,7 +960,8 @@ Table~\ref{tab:app_rq4_layer_data} presents the complete layer-wise empirical ac
         \midrule
         \textbf{Mean} & \textbf{26.38} & \textbf{16.38} & \textbf{448.50} & \textbf{150.94} & \textbf{552.56} & \textbf{405.45} & \textbf{500.53} \\
         \bottomrule
-    \end{tabular}
+    \end{tabular}%
+    }
 \end{table}
 
 \end{document}
